@@ -1,0 +1,10 @@
+^D:\CHESS WORLD\BUILD\_DEPS\SFML-SUBBUILD\CMAKEFILES\53A5DE95248E01C7A46791FBE9A1E7E2\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" "-SD:/CHESS WORLD/build/_deps/sfml-subbuild" "-BD:/CHESS WORLD/build/_deps/sfml-subbuild" --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file "D:/CHESS WORLD/build/_deps/sfml-subbuild/sfml-populate.sln"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

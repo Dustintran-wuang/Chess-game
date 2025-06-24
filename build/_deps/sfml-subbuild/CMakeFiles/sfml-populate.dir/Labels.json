@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "D:/CHESS WORLD/build/_deps/sfml-subbuild/CMakeFiles/sfml-populate"
+		},
+		{
+			"file" : "D:/CHESS WORLD/build/_deps/sfml-subbuild/CMakeFiles/53a5de95248e01c7a46791fbe9a1e7e2/sfml-populate.rule"
+		},
+		{
+			"file" : "D:/CHESS WORLD/build/_deps/sfml-subbuild/CMakeFiles/0a9fc4c7cfd37bb49d4391c6aea912d7/sfml-populate-complete.rule"
+		},
+		{
+			"file" : "D:/CHESS WORLD/build/_deps/sfml-subbuild/CMakeFiles/c83eff1dc1e52560e4f7f498c406e746/sfml-populate-build.rule"
+		},
+		{
+			"file" : "D:/CHESS WORLD/build/_deps/sfml-subbuild/CMakeFiles/c83eff1dc1e52560e4f7f498c406e746/sfml-populate-configure.rule"
+		},
+		{
+			"file" : "D:/CHESS WORLD/build/_deps/sfml-subbuild/CMakeFiles/c83eff1dc1e52560e4f7f498c406e746/sfml-populate-download.rule"
+		},
+		{
+			"file" : "D:/CHESS WORLD/build/_deps/sfml-subbuild/CMakeFiles/c83eff1dc1e52560e4f7f498c406e746/sfml-populate-install.rule"
+		},
+		{
+			"file" : "D:/CHESS WORLD/build/_deps/sfml-subbuild/CMakeFiles/c83eff1dc1e52560e4f7f498c406e746/sfml-populate-mkdir.rule"
+		},
+		{
+			"file" : "D:/CHESS WORLD/build/_deps/sfml-subbuild/CMakeFiles/c83eff1dc1e52560e4f7f498c406e746/sfml-populate-patch.rule"
+		},
+		{
+			"file" : "D:/CHESS WORLD/build/_deps/sfml-subbuild/CMakeFiles/c83eff1dc1e52560e4f7f498c406e746/sfml-populate-test.rule"
+		},
+		{
+			"file" : "D:/CHESS WORLD/build/_deps/sfml-subbuild/CMakeFiles/c83eff1dc1e52560e4f7f498c406e746/sfml-populate-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"sfml-populate"
+		],
+		"name" : "sfml-populate"
+	}
+}

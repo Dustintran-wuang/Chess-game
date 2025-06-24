@@ -1,0 +1,5 @@
+# CMake generation dependency list for this directory.
+D:/CHESS WORLD/build/CMakeFiles/cmake.verify_globs
+D:/CHESS WORLD/build/_deps/sfml-src/cmake/Modules/FindFreetype.cmake
+D:/CHESS WORLD/build/_deps/sfml-src/src/SFML/Graphics/CMakeLists.txt
+D:/CHESS WORLD/build/_deps/sfml-src/tools/windows/resource.rc.in

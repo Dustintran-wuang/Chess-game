@@ -1,15 +1,14 @@
-#ifndef KNIGHT_H
-#define KNIGHT_H
-
+#pragma once
 #include "BasePiece.h"
 
 class Knight : public BasePiece {
 public:
-    Knight(const sf::Vector2i& position, const sf::Color& color);
-    ~Knight() override;
+    Knight(Color color, Position pos)
+        : BasePiece(color, PieceType::Knight, pos) {
+    }
 
-    void draw(sf::RenderWindow& window) override;
-    bool isValidMove(int fromX, int fromY, int toX, int toY, BasePiece* board[8][8]) const override;
+    // -------- Logic --------
+    bool is_move_valid(const Board& board, Position dest) const override;
+    std::vector<Position> get_all_moves(const Board& board) const override;
+    std::unique_ptr<BasePiece> clone() const override;
 };
-
-#endif // KNIGHT_H

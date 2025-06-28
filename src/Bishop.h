@@ -1,15 +1,13 @@
-#ifndef BISHOP_H
-#define BISHOP_H
-
+#pragma once
 #include "BasePiece.h"
 
 class Bishop : public BasePiece {
 public:
-    Bishop(const sf::Vector2i& position, const sf::Color& color);
-    ~Bishop() override;
+    Bishop(Color color, Position pos)
+        : BasePiece(color, PieceType::Bishop, pos) {}
 
-    void draw(sf::RenderWindow& window) override;
-    bool isValidMove(int fromX, int fromY, int toX, int toY, BasePiece* board[8][8]) const override;
+    // -------- Logic --------
+    bool is_move_valid(const Board& board, Position dest) const override;
+    std::vector<Position> get_all_moves(const Board& board) const override;
+    std::unique_ptr<BasePiece> clone() const override;
 };
-
-#endif // BISHOP_H

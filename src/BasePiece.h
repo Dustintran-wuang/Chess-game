@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+using namespace std;
+
 // ----------- ENUMS -----------
 enum class Color { White, Black };
 enum class PieceType { King, Queen, Knight, Bishop, Rook, Pawn };
@@ -15,7 +17,7 @@ struct Position {
     int y;
 
     // Để so sánh vị trí quân cờ
-    bool operator==(const Position& other) const {
+    bool operator == (const Position& other) const {
         return x == other.x && y == other.y;
     }
 };
@@ -38,17 +40,25 @@ public:
     virtual ~BasePiece() = default;
 
     // -------- Getter --------
-    Position get_pos() const { return pos; }
-    Color get_color() const { return color; }
-    PieceType get_pieceType() const { return type; }
+    Position get_pos() const { 
+        return pos; 
+    }
+    Color get_color() const { 
+        return color; 
+    }
+    PieceType get_pieceType() const { 
+        return type; 
+    }
 
     // -------- Setter --------
-    void set_pos(Position new_pos) { pos = new_pos; }
+    void set_pos(Position new_pos) { 
+        pos = new_pos; 
+    }
 
     // -------- Logic --------
-    virtual bool is_move_valid(const Board& board, Position dest) const = 0;
-    virtual std::vector<Position> get_all_moves(const Board& board) const = 0;
-    virtual std::unique_ptr<BasePiece> clone() const = 0;
+    virtual bool is_move_valid(const Board& board, Position dest) const = 0; // Kiểm tra nước đi có hợp lí hay không
+    virtual vector<Position> get_all_moves(const Board& board) const = 0; // Danh sách các nước đi mà quân cờ có thể đi (Để check chiếu cho dễ)
+    virtual std::unique_ptr<BasePiece> clone() const = 0; // Để undo/redo
 };
 
 #endif

@@ -47,7 +47,7 @@ public:
     // -------- Setter --------
     void set_pos(Position new_pos) { pos = new_pos; }
 
-    // -------- Pure Virtual Logic --------
+    // -------- Logic --------
     virtual bool is_move_valid(const Board& board, Position dest) const = 0;
     virtual std::vector<Position> get_all_moves(const Board& board) const = 0;
 };

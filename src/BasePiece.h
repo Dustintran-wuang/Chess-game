@@ -58,7 +58,7 @@ public:
     // -------- Logic --------
     virtual bool is_move_valid(const Board& board, Position dest) const = 0; // Kiểm tra nước đi có hợp lí hay không
     virtual vector<Position> get_all_moves(const Board& board) const = 0; // Danh sách các nước đi mà quân cờ có thể đi (Để check chiếu cho dễ)
-    virtual std::unique_ptr<BasePiece> clone() const = 0; // Để undo/redo
+    virtual unique_ptr<BasePiece> clone() const = 0; // Để undo/redo
 };
 
 #endif

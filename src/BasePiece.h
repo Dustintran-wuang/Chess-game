@@ -20,7 +20,7 @@ struct Position {
     }
 };
 
-// Forward declaration để tránh include vòng lặp
+// Forward declaration
 class Board;
 
 // ----------- BASE CLASS -----------

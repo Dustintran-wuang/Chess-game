@@ -1,31 +1,55 @@
 #ifndef BASEPIECE_H
 #define BASEPIECE_H
 
-#include <SFML/Graphics.hpp>
 #include <iostream>
 #include <string>
+#include <vector>
 
-// Abstract base class for all chess pieces
+// ----------- ENUMS -----------
+enum class Color { White, Black };
+enum class PieceType { King, Queen, Knight, Bishop, Rook, Pawn };
+
+// ----------- POSITION STRUCT -----------
+struct Position {
+    int x;
+    int y;
+
+    // Để so sánh vị trí quân cờ
+    bool operator==(const Position& other) const {
+        return x == other.x && y == other.y;
+    }
+};
+
+// Forward declaration để tránh include vòng lặp
+class Board;
+
+// ----------- BASE CLASS -----------
 class BasePiece {
 protected:
-    std::string name;               // Name of the piece ("Pawn", "Knight", etc.)
-    sf::Vector2i position;          // Board position (0..7, 0..7)
-    sf::Color color;                // Color (white or black)
+    PieceType type;
+    Position pos;
+    Color color;
+
 public:
-    BasePiece(const std::string& name, const sf::Vector2i& position, const sf::Color& color);
-    virtual ~BasePiece();
+    BasePiece() = default;
 
-    // Pure virtual functions to be overridden
-    virtual void draw(sf::RenderWindow& window) = 0;
-    virtual bool isValidMove(int fromX, int fromY, int toX, int toY, BasePiece* board[8][8]) const = 0;
+    BasePiece(PieceType type, Position pos, Color color)
+        : type(type), pos(pos), color(color) {
+    }
 
-    // Getters
-    const std::string& getName() const;
-    const sf::Vector2i& getPosition() const;
-    const sf::Color& getColor() const;
+    virtual ~BasePiece() = default;
 
-    // Setter
-    void setPosition(const sf::Vector2i& newPos);
+    // -------- Getter --------
+    Position get_pos() const { return pos; }
+    Color get_color() const { return color; }
+    PieceType get_pieceType() const { return type; }
+
+    // -------- Setter --------
+    void set_pos(Position new_pos) { pos = new_pos; }
+
+    // -------- Pure Virtual Logic --------
+    virtual bool is_move_valid(const Board& board, Position dest) const = 0;
+    virtual std::vector<Position> get_all_moves(const Board& board) const = 0;
 };
 
 #endif

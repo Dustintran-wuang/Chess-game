@@ -32,11 +32,9 @@ protected:
 
 public:
     BasePiece() = default;
-
     BasePiece(PieceType type, Position pos, Color color)
         : type(type), pos(pos), color(color) {
     }
-
     virtual ~BasePiece() = default;
 
     // -------- Getter --------

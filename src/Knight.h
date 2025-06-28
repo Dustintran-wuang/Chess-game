@@ -4,8 +4,7 @@
 class Knight : public BasePiece {
 public:
     Knight(Color color, Position pos)
-        : BasePiece(color, PieceType::Knight, pos) {
-    }
+        : BasePiece(color, PieceType::Knight, pos) {}
 
     // -------- Logic --------
     bool is_move_valid(const Board& board, Position dest) const override;

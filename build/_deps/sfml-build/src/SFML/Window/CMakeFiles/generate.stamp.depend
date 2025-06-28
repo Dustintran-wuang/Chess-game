@@ -2,6 +2,6 @@
 C:/Program Files/CMake/share/cmake-4.0/Modules/FindOpenGL.cmake
 C:/Program Files/CMake/share/cmake-4.0/Modules/FindPackageHandleStandardArgs.cmake
 C:/Program Files/CMake/share/cmake-4.0/Modules/FindPackageMessage.cmake
-D:/CHESS WORLD/build/CMakeFiles/cmake.verify_globs
-D:/CHESS WORLD/build/_deps/sfml-src/src/SFML/Window/CMakeLists.txt
-D:/CHESS WORLD/build/_deps/sfml-src/tools/windows/resource.rc.in
+D:/CHESS_WORLD/build/CMakeFiles/cmake.verify_globs
+D:/CHESS_WORLD/build/_deps/sfml-src/src/SFML/Window/CMakeLists.txt
+D:/CHESS_WORLD/build/_deps/sfml-src/tools/windows/resource.rc.in

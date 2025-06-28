@@ -1,7 +1,7 @@
 {
 	"InstallScripts" : 
 	[
-		"D:/CHESS WORLD/build/_deps/sfml-subbuild/cmake_install.cmake"
+		"D:/CHESS_WORLD/build/_deps/sfml-subbuild/cmake_install.cmake"
 	],
 	"Parallel" : false
 }

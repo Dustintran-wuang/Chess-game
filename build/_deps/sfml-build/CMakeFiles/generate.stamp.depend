@@ -83,10 +83,10 @@ C:/Program Files/CMake/share/cmake-4.0/Modules/Platform/Windows-MSVC-C.cmake
 C:/Program Files/CMake/share/cmake-4.0/Modules/Platform/Windows-MSVC.cmake
 C:/Program Files/CMake/share/cmake-4.0/Modules/WriteBasicConfigVersionFile.cmake
 C:/Program Files/CMake/share/cmake-4.0/Templates/CPackConfig.cmake.in
-D:/CHESS WORLD/build/CMakeFiles/4.0.2/CMakeCCompiler.cmake
-D:/CHESS WORLD/build/CMakeFiles/cmake.verify_globs
-D:/CHESS WORLD/build/_deps/sfml-src/CMakeLists.txt
-D:/CHESS WORLD/build/_deps/sfml-src/cmake/CompilerOptionsOverride.cmake
-D:/CHESS WORLD/build/_deps/sfml-src/cmake/Config.cmake
-D:/CHESS WORLD/build/_deps/sfml-src/cmake/SFMLConfig.cmake.in
-D:/CHESS WORLD/build/_deps/sfml-src/cmake/SFMLConfigDependencies.cmake.in
+D:/CHESS_WORLD/build/CMakeFiles/4.0.2/CMakeCCompiler.cmake
+D:/CHESS_WORLD/build/CMakeFiles/cmake.verify_globs
+D:/CHESS_WORLD/build/_deps/sfml-src/CMakeLists.txt
+D:/CHESS_WORLD/build/_deps/sfml-src/cmake/CompilerOptionsOverride.cmake
+D:/CHESS_WORLD/build/_deps/sfml-src/cmake/Config.cmake
+D:/CHESS_WORLD/build/_deps/sfml-src/cmake/SFMLConfig.cmake.in
+D:/CHESS_WORLD/build/_deps/sfml-src/cmake/SFMLConfigDependencies.cmake.in

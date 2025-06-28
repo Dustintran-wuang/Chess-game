@@ -1,6 +1,6 @@
 # CMake generation dependency list for this directory.
 C:/Program Files/CMake/share/cmake-4.0/Modules/CMakeParseArguments.cmake
-D:/CHESS WORLD/build/CMakeFiles/cmake.verify_globs
-D:/CHESS WORLD/build/_deps/sfml-src/cmake/CompilerWarnings.cmake
-D:/CHESS WORLD/build/_deps/sfml-src/cmake/Macros.cmake
-D:/CHESS WORLD/build/_deps/sfml-src/src/SFML/CMakeLists.txt
+D:/CHESS_WORLD/build/CMakeFiles/cmake.verify_globs
+D:/CHESS_WORLD/build/_deps/sfml-src/cmake/CompilerWarnings.cmake
+D:/CHESS_WORLD/build/_deps/sfml-src/cmake/Macros.cmake
+D:/CHESS_WORLD/build/_deps/sfml-src/src/SFML/CMakeLists.txt

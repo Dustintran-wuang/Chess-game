@@ -1,6 +1,6 @@
-^D:\CHESS WORLD\BUILD\_DEPS\SFML-SRC\SRC\SFML\SYSTEM\CMAKELISTS.TXT
+^D:\CHESS_WORLD\BUILD\_DEPS\SFML-SRC\SRC\SFML\SYSTEM\CMAKELISTS.TXT
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" "-SD:/CHESS WORLD" "-BD:/CHESS WORLD/build" --check-stamp-file "D:/CHESS WORLD/build/_deps/sfml-build/src/SFML/System/CMakeFiles/generate.stamp"
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/CHESS_WORLD -BD:/CHESS_WORLD/build --check-stamp-file D:/CHESS_WORLD/build/_deps/sfml-build/src/SFML/System/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone

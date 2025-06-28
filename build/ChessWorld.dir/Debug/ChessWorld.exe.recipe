@@ -2,22 +2,22 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>D:\CHESS WORLD\build\x64\Debug\ZERO_CHECK</FullPath>
+      <FullPath>D:\CHESS_WORLD\build\x64\Debug\ZERO_CHECK</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>D:\CHESS WORLD\build\bin\Debug\sfml-system-d-2.dll</FullPath>
+      <FullPath>D:\CHESS_WORLD\build\bin\Debug\sfml-system-d-2.dll</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>D:\CHESS WORLD\build\bin\Debug\sfml-audio-d-2.dll</FullPath>
+      <FullPath>D:\CHESS_WORLD\build\bin\Debug\sfml-audio-d-2.dll</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>D:\CHESS WORLD\build\bin\Debug\sfml-window-d-2.dll</FullPath>
+      <FullPath>D:\CHESS_WORLD\build\bin\Debug\sfml-window-d-2.dll</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>D:\CHESS WORLD\build\bin\Debug\sfml-graphics-d-2.dll</FullPath>
+      <FullPath>D:\CHESS_WORLD\build\bin\Debug\sfml-graphics-d-2.dll</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>D:\CHESS WORLD\build\bin\Debug\ChessWorld.exe</FullPath>
+      <FullPath>D:\CHESS_WORLD\build\bin\Debug\ChessWorld.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

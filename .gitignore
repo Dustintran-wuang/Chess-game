@@ -1,0 +1,50 @@
+# Bỏ thư mục build
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Bỏ file đầu ra
+*.exe
+*.out
+*.a
+*.lib
+*.so
+*.dll
+*.dylib
+*.exp
+*.pdb
+
+# Bỏ VS Code cài đặt cá nhân
+.vscode/
+
+# Bỏ file backup/tạm
+*.log
+*.obj
+*.o
+*.tmp
+*.bak
+*.swp
+
+# Bỏ thư mục từ FetchContent
+_deps/
+
+# Bỏ output của Visual Studio
+*.vcxproj*
+*.sln
+*.user
+*.opensdf
+*.sdf
+*.ncb
+*.ipch
+
+# SFML build thư viện
+lib/
+bin/
+Debug/
+Release/
+
+# Bỏ hệ điều hành sinh ra
+.DS_Store
+Thumbs.db

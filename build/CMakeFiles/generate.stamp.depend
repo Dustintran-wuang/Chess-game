@@ -90,8 +90,8 @@ C:/Program Files/CMake/share/cmake-4.0/Modules/Platform/Windows-MSVC-CXX.cmake
 C:/Program Files/CMake/share/cmake-4.0/Modules/Platform/Windows-MSVC.cmake
 C:/Program Files/CMake/share/cmake-4.0/Modules/Platform/Windows.cmake
 C:/Program Files/CMake/share/cmake-4.0/Modules/Platform/WindowsPaths.cmake
-D:/CHESS WORLD/CMakeLists.txt
-D:/CHESS WORLD/build/CMakeFiles/4.0.2/CMakeCXXCompiler.cmake
-D:/CHESS WORLD/build/CMakeFiles/4.0.2/CMakeRCCompiler.cmake
-D:/CHESS WORLD/build/CMakeFiles/4.0.2/CMakeSystem.cmake
-D:/CHESS WORLD/build/CMakeFiles/cmake.verify_globs
+D:/CHESS_WORLD/CMakeLists.txt
+D:/CHESS_WORLD/build/CMakeFiles/4.0.2/CMakeCXXCompiler.cmake
+D:/CHESS_WORLD/build/CMakeFiles/4.0.2/CMakeRCCompiler.cmake
+D:/CHESS_WORLD/build/CMakeFiles/4.0.2/CMakeSystem.cmake
+D:/CHESS_WORLD/build/CMakeFiles/cmake.verify_globs

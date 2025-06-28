@@ -2,13 +2,13 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>D:\CHESS WORLD\build\_deps\sfml-subbuild\x64\Debug\ZERO_CHECK</FullPath>
+      <FullPath>D:\CHESS_WORLD\build\_deps\sfml-subbuild\x64\Debug\ZERO_CHECK</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>D:\CHESS WORLD\build\_deps\sfml-subbuild\x64\Debug\sfml-populate</FullPath>
+      <FullPath>D:\CHESS_WORLD\build\_deps\sfml-subbuild\x64\Debug\sfml-populate</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>D:\CHESS WORLD\build\_deps\sfml-subbuild\x64\Debug\ALL_BUILD</FullPath>
+      <FullPath>D:\CHESS_WORLD\build\_deps\sfml-subbuild\x64\Debug\ALL_BUILD</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

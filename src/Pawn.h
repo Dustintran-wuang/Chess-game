@@ -1,27 +1,36 @@
-#ifndef PAWN_H
-#define PAWN_H
-
+#pragma once
 #include "BasePiece.h"
 
 class Pawn : public BasePiece {
-private:
-    bool has_moved = false;         // Kiểm tra đã di chuyển lần đầu hay chưa
-    bool just_moved_two = false;    // Dùng cho en passant
 public:
-    Pawn(const sf::Vector2i& position, const sf::Color& color);
-    ~Pawn() override;
+	bool first_move = true;
+	bool just_moved_2step = false;
 
-    void draw(sf::RenderWindow& window) override;
-    bool isValidMove(int fromX, int fromY, int toX, int toY, BasePiece* board[8][8]) const override;
+private:
+	Pawn(Color color, Position pos)
+		: BasePiece(color, PieceType::Pawn, pos) {
+	}
 
-    bool isPromotionMove(int toX) const;
-    bool canPromote() const;
-    bool hasMoved() const;
-    void setHasMoved(bool moved);
-    bool isEnPassantMove(int fromX, int fromY, int toX, int toY, BasePiece* board[8][8]) const;
-    bool canEnPassant() const;
-    void setJustMovedTwo(bool movedTwo);
-    bool didJustMoveTwo() const;
+	// -------- Getter --------
+	bool is_first_move() {
+		return first_move;
+	}
+	bool did_just_move_2step() {
+		return just_moved_2step;
+	}
+
+	// -------- Setter --------
+	void set_first_move(bool x) {
+		first_move = x;
+	}
+	void set_just_moved_2step(bool x) {
+		just_moved_2step = x;
+	}
+
+	// -------- Logic --------
+	bool can_promote() const; // Tốt thăng thần <(")
+	bool can_en_passant(const Board& board, Position dest) const; // Tốt thăng hoa <(")
+	bool is_move_valid(const Board& board, Position dest) const override;
+	std::vector<Position> get_all_moves(const Board& board) const override;
+	std::unique_ptr<BasePiece> clone() const override;
 };
-
-#endif // PAWN_H

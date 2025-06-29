@@ -4,10 +4,12 @@
 class Rook : public BasePiece {
 private:
 	bool castling = true;
+
 public:
 	Rook(Color color, Position pos)
 		: BasePiece(color, PieceType::Rook, pos) {
 	}
+
 	// -------- Getter --------
 	bool can_castling() {
 		return castling;

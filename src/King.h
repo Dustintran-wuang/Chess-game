@@ -7,8 +7,7 @@ private:
 
 public:
 	King(Color color, Position pos)
-		: BasePiece(color, PieceType::King, pos) {
-	}
+		: BasePiece(color, PieceType::King, pos) {}
 
 	// -------- Getter --------
 	bool can_castling() {

@@ -7,8 +7,7 @@ private:
 
 public:
 	Rook(Color color, Position pos)
-		: BasePiece(color, PieceType::Rook, pos) {
-	}
+		: BasePiece(color, PieceType::Rook, pos) {}
 
 	// -------- Getter --------
 	bool can_castling() {

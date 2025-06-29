@@ -8,8 +8,7 @@ public:
 
 private:
 	Pawn(Color color, Position pos)
-		: BasePiece(color, PieceType::Pawn, pos) {
-	}
+		: BasePiece(color, PieceType::Pawn, pos) {}
 
 	// -------- Getter --------
 	bool is_first_move() {

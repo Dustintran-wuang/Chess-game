@@ -1,21 +1,25 @@
-#ifndef ROOK_H
-#define ROOK_H
-
+#pragma once
 #include "BasePiece.h"
 
 class Rook : public BasePiece {
 private:
-    bool has_moved = false;
+	bool castling = true;
 public:
-    Rook(const sf::Vector2i& position, const sf::Color& color);
-    ~Rook() override;
+	Rook(Color color, Position pos)
+		: BasePiece(color, PieceType::Rook, pos) {
+	}
+	// -------- Getter --------
+	bool can_castling() {
+		return castling;
+	}
 
-    void draw(sf::RenderWindow& window) override;
-    bool isValidMove(int fromX, int fromY, int toX, int toY, BasePiece* board[8][8]) const override;
+	// -------- Setter --------
+	void get_castling(bool x) {
+		castling = x;
+	}
 
-    bool canCastle() const;
-    bool hasMoved() const;
-    void setHasMoved(bool moved);
+	// -------- Logic --------
+	bool is_move_valid(const Board& board, Position dest) const override;
+	std::vector<Position> get_all_moves(const Board& board) const override;
+	std::unique_ptr<BasePiece> clone() const override;
 };
-
-#endif // ROOK_H

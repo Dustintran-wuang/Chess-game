@@ -4,10 +4,12 @@
 class King : public BasePiece {
 private:
 	bool castling = true;
+
 public:
 	King(Color color, Position pos)
 		: BasePiece(color, PieceType::King, pos) {
 	}
+
 	// -------- Getter --------
 	bool can_castling() {
 		return castling;

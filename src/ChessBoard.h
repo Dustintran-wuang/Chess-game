@@ -1,4 +1,4 @@
-﻿#ifndef BOARD_H
+#ifndef BOARD_H
 #define BOARD_H
 
 #include <SFML/Graphics.hpp>
@@ -6,6 +6,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include "BasePiece.h"
 
 class Board {
 private:
@@ -16,9 +17,6 @@ private:
     std::map<std::string, sf::Texture> pieceTextures;  // Texture cho các quân cờ
     sf::Sprite pieces[8][8];                           // Sprite quân cờ trên bàn
     std::string pieceNames[8][8];                      // Tên quân cờ tại mỗi ô
-
-    // --- Highlight ---
-    std::vector<sf::RectangleShape> highlights;        // Các ô được highlight
 
     // --- Âm thanh ---
     std::map<std::string, sf::SoundBuffer> soundBuffers;
@@ -37,17 +35,30 @@ public:
     // Lấy tên quân cờ tại một ô cụ thể
     std::string getPieceName(int row, int col) const;
 
-    // Tô sáng các nước đi hợp lệ (Phần này làm chung với logic)
-    void highlightValidMove(const std::vector<sf::Vector2i>& moves); 
-
-    // Xóa toàn bộ highlight
-    void clearHighlightMove();
-
-	// Phát âm thanh theo tên (Làm chung với logic, VD: castle) (bổ sung cho movePiece)
+    // Phát âm thanh theo tên (Làm chung với logic, VD: castle) (bổ sung cho movePiece)
     void playSound(const std::string& name);
 
-	// Phát âm thanh khi di chuyển (Làm chung với dragHandler)) 
+    // Phát âm thanh khi di chuyển (Làm chung với dragHandler)) 
     void movePiece(int fromRow, int fromCol, int toRow, int toCol);
+
+    // --- Hỗ trợ set asset bằng getter từ BasePiece ---
+    std::string getNameFromPiece(const BasePiece& piece) const {
+        std::string name = (piece.get_color() == Color::White) ? "w" : "b";
+        switch (piece.get_pieceType()) {
+            case PieceType::Pawn:   name += "Pawn"; break;
+            case PieceType::Rook:   name += "Rook"; break;
+            case PieceType::Knight: name += "Knight"; break;
+            case PieceType::Bishop: name += "Bishop"; break;
+            case PieceType::Queen:  name += "Queen"; break;
+            case PieceType::King:   name += "King"; break;
+        }
+        return name;
+    }
+
+    // Lấy vị trí quân cờ từ BasePiece
+    Position getPiecePosition(const BasePiece& piece) const {
+        return piece.get_pos();
+    }
 };
 
 #endif

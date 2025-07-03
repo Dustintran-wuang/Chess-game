@@ -59,6 +59,12 @@ public:
     Position getPiecePosition(const BasePiece& piece) const {
         return piece.get_pos();
     }
+
+    // Phát âm thanh khi phong cấp quân cờ
+    void promotePiece(int row, int col, const std::string& newPieceName);
+    
+    // Phát âm thanh khi bắt đầu game
+    void startGame();
 };
 
 #endif

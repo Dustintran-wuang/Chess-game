@@ -1,7 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "Board.h"
+#include "ChessBoard.h"
 #include <SFML/Graphics.hpp>
 
 // Enum các trạng thái của game

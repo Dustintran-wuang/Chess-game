@@ -6,8 +6,10 @@
     ]
   },
   "ExpandedNodes": [
-    ""
+    "",
+    "\\out",
+    "\\src"
   ],
-  "SelectedNode": "\\CMakeLists.txt",
+  "SelectedNode": "\\src\\DragHandler.h",
   "PreviewInSolutionExplorer": false
 }

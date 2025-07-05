@@ -15,7 +15,7 @@ public:
 	}
 
 	// -------- Setter --------
-	void get_castling(bool x) {
+	void set_castling(bool x) {
 		castling = x;
 	}
 

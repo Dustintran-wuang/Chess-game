@@ -1,5 +1,5 @@
 ﻿#include "Pawn.h"
-#include "ChessBoard.h"          // cần để gọi get_piece_at, is_inside_board
+#include "ChessBoard.h"
 #include <memory>
 
 // --------- PHONG TỐT THÀNH HẬU, XE,... ----------

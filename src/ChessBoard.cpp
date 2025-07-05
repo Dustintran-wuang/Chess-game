@@ -109,3 +109,15 @@ void Board::promotePiece(int row, int col, const string& newPieceName) {
 void Board::startGame() {
     playSound("game-start");  // Phát âm thanh bắt đầu game
 }
+
+// NHỮNG HÀM CẦN TRIỂN KHAI TRONG PHẦN LOGIC CỦA BOARD: (Quang làm giùm phần này)
+
+const BasePiece* Board::get_piece_at(Position p) const
+{
+    return nullptr;
+}
+
+bool Board::is_inside_board(Position p) const
+{
+    return false;
+}

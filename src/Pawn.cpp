@@ -11,7 +11,7 @@ bool Pawn::can_promote() const {
 
 // --------- EN PASSANT ----------
 bool Pawn::can_en_passant(const Board& board, Position dest) const {
-    int dir = (color == Color::White) ? -1 : 1; // Cờ trắng thì 1, đen thì -1
+    int dir = (color == Color::White) ? -1 : 1; // Cờ trắng thì -1, đen thì 1
     if (dest.y != pos.y + dir) return false;          // FALSE nếu không tiến 1 hàng
     if (std::abs(dest.x - pos.x) != 1) return false;  // FALSE nếu không chéo 1 cột
     // Ô đích phải trống

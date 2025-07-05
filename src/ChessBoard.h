@@ -8,7 +8,7 @@
 #include <vector>
 #include "BasePiece.h"
 
-class ChessBoard {
+class Board {
 private:
     // --- Texture và Sprite ---
     sf::Texture boardTexture;                          // Texture bàn cờ

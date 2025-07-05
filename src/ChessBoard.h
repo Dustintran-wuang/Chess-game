@@ -65,6 +65,10 @@ public:
     
     // Phát âm thanh khi bắt đầu game
     void startGame();
+
+    // HÀM CẦN TRIỂN KHAI TRONG PHẦN LOGIC CỦA BOARD HIỆN TẠI:
+    const BasePiece* get_piece_at(Position p) const;
+    bool is_inside_board(Position p) const;
 };
 
 #endif

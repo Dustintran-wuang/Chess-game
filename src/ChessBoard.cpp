@@ -2,7 +2,6 @@
 #include <iostream>
 
 using namespace std;
-using namespace sf;
 
 bool Board::loadAssets() {
     // Load bàn cờ
@@ -37,7 +36,7 @@ bool Board::loadAssets() {
     return true;  // Trả về true nếu tải tất cả assets thành công
 }
 
-void Board::draw(RenderWindow& window) {
+void Board::draw(sf::RenderWindow& window) {
     window.draw(boardSprite);  // Vẽ bàn cờ lên cửa sổ
 
     // Vẽ các quân cờ
@@ -94,7 +93,7 @@ void Board::movePiece(int fromRow, int fromCol, int toRow, int toCol) {
     // Cập nhật sprite
     pieces[toRow][toCol].setTexture(*pieces[fromRow][fromCol].getTexture());
     pieces[toRow][toCol].setPosition(toCol * 64, toRow * 64);  // Đặt vị trí mới
-    pieces[fromRow][fromCol].setTexture(Texture());  // Xóa texture ở vị trí cũ
+    pieces[fromRow][fromCol].setTexture(sf::Texture());  // Xóa texture ở vị trí cũ
 }
 
 void Board::promotePiece(int row, int col, const string& newPieceName) {
@@ -118,6 +117,21 @@ const BasePiece* Board::get_piece_at(Position p) const
 }
 
 bool Board::is_inside_board(Position p) const
+{
+    return false;
+}
+
+bool Board::is_check(Color color) const
+{
+    return false;
+}
+
+bool Board::can_castle_rook(Position rookPos) const
+{
+    return false;
+}
+
+bool Board::is_square_under_attacked(Position pos, Color byColor) const
 {
     return false;
 }

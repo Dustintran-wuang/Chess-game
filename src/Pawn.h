@@ -11,10 +11,10 @@ private:
 		: BasePiece(color, PieceType::Pawn, pos) {}
 
 	// -------- Getter --------
-	bool is_first_move() {
+	bool is_first_move() const {
 		return first_move;
 	}
-	bool did_just_move_2step() {
+	bool did_just_move_2step() const {
 		return just_moved_2step;
 	}
 

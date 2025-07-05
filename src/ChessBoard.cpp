@@ -1,34 +1,34 @@
 #include "ChessBoard.h"
 #include <iostream>
-#include <filesystem>
 
-namespace fs = std::filesystem;  // Đặt bí danh cho namespace filesystem để thao tác với hệ thống file
+using namespace std;
+using namespace sf;
 
 bool ChessBoard::loadAssets() {
     // Load bàn cờ
     if (!boardTexture.loadFromFile("assets/Board and pieces/brown.png")) {
-        std::cerr << "Không thể tải texture bàn cờ!" << std::endl;
+        cout << "Không thể tải texture bàn cờ!" << endl;
         return false;
     }
     boardSprite.setTexture(boardTexture);  // Gán texture đã tải cho sprite bàn cờ
 
     // Load texture các quân cờ
-    std::string pieces[] = { "wPawn", "wRook", "wKnight", "wBishop", "wQueen", "wKing",
-                           "bPawn", "bRook", "bKnight", "bBishop", "bQueen", "bKing" };
+    string pieces[] = { "wPawn", "wRook", "wKnight", "wBishop", "wQueen", "wKing",
+                      "bPawn", "bRook", "bKnight", "bBishop", "bQueen", "bKing" };
 
     // Duyệt qua tất cả các loại quân cờ và tải texture tương ứng
     for (const auto& piece : pieces) {
         if (!pieceTextures[piece].loadFromFile("assets/Board and pieces/" + piece + ".png")) {
-            std::cerr << "Không thể tải texture " << piece << "!" << std::endl;
+            cout << "Không thể tải texture " << piece << "!" << endl;
             return false;
         }
     }
 
     // Load âm thanh
-    std::string sounds[] = { "move", "capture", "castle", "check", "promote", "game-start", "game-end" };
-    for (const auto& sound : sounds) {
+    string soundNames[] = { "move", "capture", "castle", "check", "promote", "game-start", "game-end" };
+    for (const auto& sound : soundNames) {
         if (!soundBuffers[sound].loadFromFile("assets/Sounds-chess/" + sound + ".mp3")) {
-            std::cerr << "Không thể tải âm thanh " << sound << "!" << std::endl;
+            cout << "Không thể tải âm thanh " << sound << "!" << endl;
             continue;  // Tiếp tục tải các âm thanh khác nếu có lỗi
         }
         sounds[sound].setBuffer(soundBuffers[sound]);  // Gán buffer âm thanh cho đối tượng sound
@@ -37,7 +37,7 @@ bool ChessBoard::loadAssets() {
     return true;  // Trả về true nếu tải tất cả assets thành công
 }
 
-void ChessBoard::draw(sf::RenderWindow& window) {
+void ChessBoard::draw(RenderWindow& window) {
     window.draw(boardSprite);  // Vẽ bàn cờ lên cửa sổ
 
     // Vẽ các quân cờ
@@ -50,7 +50,7 @@ void ChessBoard::draw(sf::RenderWindow& window) {
     }
 }
 
-void ChessBoard::setPiece(int row, int col, const std::string& name) {
+void ChessBoard::setPiece(int row, int col, const string& name) {
     if (row < 0 || row >= 8 || col < 0 || col >= 8) return;  // Kiểm tra giới hạn bàn cờ
 
     pieceNames[row][col] = name;  // Gán tên quân cờ
@@ -60,17 +60,17 @@ void ChessBoard::setPiece(int row, int col, const std::string& name) {
     }
 }
 
-std::string ChessBoard::getPieceName(int row, int col) const {
+string ChessBoard::getPieceName(int row, int col) const {
     if (row < 0 || row >= 8 || col < 0 || col >= 8) return "";  // Kiểm tra giới hạn
     return pieceNames[row][col];  // Trả về tên quân cờ tại vị trí [row][col]
 }
 
-void ChessBoard::playSound(const std::string& name) {
+void ChessBoard::playSound(const string& name) {
     if (sounds.find(name) != sounds.end()) {  // Nếu âm thanh tồn tại
         sounds[name].play();  // Phát âm thanh
     }
     else {
-        std::cerr << "Không tìm thấy âm thanh " << name << "!" << std::endl;
+        cout << "Không tìm thấy âm thanh " << name << "!" << endl;
     }
 }
 
@@ -92,13 +92,12 @@ void ChessBoard::movePiece(int fromRow, int fromCol, int toRow, int toCol) {
     pieceNames[fromRow][fromCol] = "";  // Xóa tên quân cờ ở vị trí cũ
 
     // Cập nhật sprite
-    pieces[toRow][toCol].setTexture(pieces[fromRow][fromCol].getTexture());
+    pieces[toRow][toCol].setTexture(*pieces[fromRow][fromCol].getTexture());
     pieces[toRow][toCol].setPosition(toCol * 64, toRow * 64);  // Đặt vị trí mới
-    pieces[fromRow][fromCol].setTexture(sf::Texture());  // Xóa texture ở vị trí cũ
+    pieces[fromRow][fromCol].setTexture(Texture());  // Xóa texture ở vị trí cũ
 }
 
-// Xử lý phong cấp quân cờ
-void ChessBoard::promotePiece(int row, int col, const std::string& newPieceName) {
+void ChessBoard::promotePiece(int row, int col, const string& newPieceName) {
     if (row < 0 || row >= 8 || col < 0 || col >= 8) return;  // Kiểm tra giới hạn
 
     if (!pieceNames[row][col].empty()) {  // Nếu ô có quân cờ
@@ -107,7 +106,6 @@ void ChessBoard::promotePiece(int row, int col, const std::string& newPieceName)
     }
 }
 
-// Xử lý bắt đầu game
 void ChessBoard::startGame() {
     playSound("game-start");  // Phát âm thanh bắt đầu game
 }

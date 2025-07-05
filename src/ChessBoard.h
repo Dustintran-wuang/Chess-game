@@ -69,6 +69,9 @@ public:
     // HÀM CẦN TRIỂN KHAI TRONG PHẦN LOGIC CỦA BOARD HIỆN TẠI:
     const BasePiece* get_piece_at(Position p) const;
     bool is_inside_board(Position p) const;
+    bool is_check(Color color) const;
+    bool can_castle_rook(Position rookPos) const;
+    bool is_square_under_attacked(Position pos, Color byColor) const;
 };
 
 #endif

@@ -1,15 +1,16 @@
 ﻿#include "UIManager.h"
 #include <iostream>
+using namespace std;
 
 UIManager::UIManager() : window(sf::VideoMode(800, 600), "Chess Game") {
     // Khởi tạo màu sắc
-    normalColor = sf::Color(70, 70, 70);    //Màu nút khi không bị tác động
+    normalColor = sf::Color(70, 70, 70);    	//Màu nút khi không bị tác động
 	hoverColor = sf::Color(100, 100, 100);  // Màu nút khi rê chuột qua
 	pressedColor = sf::Color(50, 50, 50);   // Màu nút khi nhấn chuột
 
     // Khởi tạo UI
     if (!loadAssets()) {
-        std::cerr << "Failed to load assets!" << std::endl;
+        cout << "Failed to load assets!" << endl;
         window.close();
     }
     initUI();
@@ -26,13 +27,13 @@ void UIManager::run() {
 bool UIManager::loadAssets() {
     // Tải font chữ
     if (!font.loadFromFile("assets/Fonts/arial.ttf")) {
-        std::cerr << "Failed to load font!" << std::endl;
+        cout << "Failed to load font!" << endl;
         return false;
     }
 
     // Tải background
     if (!backgroundTexture.loadFromFile("assets/images/menu_bg.jpg")) {
-        std::cerr << "Failed to load background!" << std::endl;
+        cout << "Failed to load background!" << endl;
         return false;
     }
     backgroundSprite.setTexture(backgroundTexture);
@@ -168,14 +169,16 @@ void UIManager::handleEvents() {
             game.startNewGame();
             statusText.setString("Game started!");
         }
-		// Restart
+	// Restart
         else if (isButtonClicked(restartButton, event)) {
             game.restartGame();
             statusText.setString("Game restarted!");
         }
-		// Quit
+	// Quit
         else if (isButtonClicked(quitButton, event)) {
             window.close();
         }
     }
 }
+
+

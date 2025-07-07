@@ -81,8 +81,8 @@ std::vector<Position> King::get_all_moves(const Board& board) const {
         if (!board.can_castle_rook(rookPos))
             continue;
 
-        Position mid1{ pos.x + dir, pos.y };
-        Position mid2{ pos.x + 2 * dir, pos.y };
+        Position mid1{pos.x + dir, pos.y};
+        Position mid2{pos.x + 2 * dir, pos.y};
 
         if (board.get_piece_at(mid1) || board.get_piece_at(mid2)) continue;
         if (board.is_square_under_attacked(mid1, color) || board.is_square_under_attacked(mid2, color)) continue;

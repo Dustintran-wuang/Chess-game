@@ -58,6 +58,7 @@ bool Pawn::is_move_valid(const Board& board, Position dest) const {
         // 3) En passant
         if (can_en_passant(board, dest)) return true;
     }
+    
     return false;
 }
 
@@ -91,6 +92,7 @@ std::vector<Position> Pawn::get_all_moves(const Board& board) const {
         else if (can_en_passant(board, diag))
             moves.push_back(diag);
     }
+    
     return moves;
 }
 

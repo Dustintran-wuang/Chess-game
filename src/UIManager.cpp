@@ -169,11 +169,7 @@ void UIManager::handleEvents() {
             game.startNewGame();
             statusText.setString("Game started!");
         }
-	// Restart
-        else if (isButtonClicked(restartButton, event)) {
-            game.restartGame();
-            statusText.setString("Game restarted!");
-        }
+	
 	// Quit
         else if (isButtonClicked(quitButton, event)) {
             window.close();

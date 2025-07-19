@@ -3,6 +3,36 @@
 
 using namespace std;
 
+#include "ChessBoard.h"
+
+// Hàm khởi tạo sao chép (Copy Constructor)
+Board::Board(const Board& other) {
+    // Sao chép các thành phần đồ họa và âm thanh
+    this->boardTexture = other.boardTexture;
+    this->boardSprite.setTexture(this->boardTexture);
+    this->pieceTextures = other.pieceTextures;
+    this->soundBuffers = other.soundBuffers;
+    this->sounds = other.sounds;
+
+    for (int y = 0; y < 8; ++y) {
+        for (int x = 0; x < 8; ++x) {
+            // Sao chép tên và sprite
+            this->pieceNames[y][x] = other.pieceNames[y][x];
+            if (!this->pieceNames[y][x].empty()) {
+                this->pieces[y][x].setTexture(this->pieceTextures[this->pieceNames[y][x]]);
+                this->pieces[y][x].setPosition(x * 64, y * 64); // Giả sử ô cờ 64x64
+            }
+
+            // Quan trọng: Sao chép sâu (deep copy) trạng thái logic của quân cờ
+            if (other.board[y][x]) {
+                this->board[y][x] = other.board[y][x]->clone();
+            } else {
+                this->board[y][x] = nullptr;
+            }
+        }
+    }
+}
+
 bool Board::loadAssets() {
     // Load bàn cờ
     if (!boardTexture.loadFromFile("assets/Board and pieces/brown.png")) {
@@ -110,28 +140,85 @@ void Board::startGame() {
 }
 
 // NHỮNG HÀM CẦN TRIỂN KHAI TRONG PHẦN LOGIC CỦA BOARD: (Quang làm giùm phần này)
+// Hàm này di chuyển quân cờ và trả về quân cờ đã bị ăn
+std::unique_ptr<BasePiece> Board::move_piece_for_ai(Position from, Position to) {
+    if (!is_inside_board(from) || !is_inside_board(to)) return nullptr;
 
-const BasePiece* Board::get_piece_at(Position p) const
-{
-    return nullptr;
+    auto capturedPiece = std::move(board[to.y][to.x]);
+    board[to.y][to.x] = std::move(board[from.y][from.x]);
+    board[from.y][from.x] = nullptr;
+
+    if (board[to.y][to.x]) {
+        board[to.y][to.x]->set_pos(to);
+    }
+
+    return capturedPiece;
 }
 
-bool Board::is_inside_board(Position p) const
-{
-    return false;
+// Hàm này hoàn tác lại nước đi
+void Board::undo_move_for_ai(Position from, Position to, std::unique_ptr<BasePiece> capturedPiece) {
+    if (!is_inside_board(from) || !is_inside_board(to)) return;
+
+    board[from.y][from.x] = std::move(board[to.y][to.x]);
+    board[to.y][to.x] = std::move(capturedPiece);
+
+    if (board[from.y][from.x]) {
+        board[from.y][from.x]->set_pos(from);
+    }
 }
 
-bool Board::is_check(Color color) const
-{
-    return false;
+// Lấy quân cờ tại vị trí p
+const BasePiece* Board::get_piece_at(Position p) const {
+    if (!is_inside_board(p)) return nullptr;
+    // Giả sử bạn có mảng board[8][8] lưu unique_ptr<BasePiece>
+    return board[p.y][p.x] ? board[p.y][p.x].get() : nullptr;
 }
 
-bool Board::can_castle_rook(Position rookPos) const
-{
-    return false;
+// Kiểm tra vị trí có nằm trong bàn cờ không
+bool Board::is_inside_board(Position p) const {
+    return p.x >= 0 && p.x < 8 && p.y >= 0 && p.y < 8;
 }
 
-bool Board::is_square_under_attacked(Position pos, Color byColor) const
-{
+// Kiểm tra vua có bị chiếu không
+bool Board::is_check(Color color) const {
+    // Tìm vị trí vua
+    Position kingPos{-1, -1};
+    for (int y = 0; y < 8; ++y) {
+        for (int x = 0; x < 8; ++x) {
+            const BasePiece* piece = board[y][x].get();
+            if (piece && piece->get_pieceType() == PieceType::King && piece->get_color() == color) {
+                kingPos = {x, y};
+                break;
+            }
+        }
+    }
+    if (kingPos.x == -1) return false; // Không tìm thấy vua
+
+    // Kiểm tra ô vua có bị tấn công không
+    return is_square_under_attacked(kingPos, color == Color::White ? Color::Black : Color::White);
+}
+
+// Kiểm tra xe có thể nhập thành không (chưa di chuyển)
+bool Board::can_castle_rook(Position rookPos) const {
+    if (!is_inside_board(rookPos)) return false;
+    const BasePiece* piece = get_piece_at(rookPos);
+    if (!piece || piece->get_pieceType() != PieceType::Rook) return false;
+    // Giả sử Rook có hàm can_castling()
+    const Rook* rook = dynamic_cast<const Rook*>(piece);
+    return rook && rook->can_castling();
+}
+
+// Kiểm tra ô pos có bị quân đối phương tấn công không
+bool Board::is_square_under_attacked(Position pos, Color byColor) const {
+    for (int y = 0; y < 8; ++y) {
+        for (int x = 0; x < 8; ++x) {
+            const BasePiece* piece = board[y][x].get();
+            if (piece && piece->get_color() == byColor) {
+                if (piece->is_move_valid(*this, pos)) {
+                    return true;
+                }
+            }
+        }
+    }
     return false;
 }

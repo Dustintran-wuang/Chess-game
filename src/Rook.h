@@ -10,7 +10,7 @@ public:
 		: BasePiece(color, PieceType::Rook, pos) {}
 
 	// -------- Getter --------
-	bool can_castling() {
+	bool can_castling() const{
 		return castling;
 	}
 

@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include "BasePiece.h"
+#include "Rook.h"
 
 class Board {
 private:
@@ -17,12 +18,15 @@ private:
     std::map<std::string, sf::Texture> pieceTextures;  // Texture cho các quân cờ
     sf::Sprite pieces[8][8];                           // Sprite quân cờ trên bàn
     std::string pieceNames[8][8];                      // Tên quân cờ tại mỗi ô
+    std::unique_ptr<BasePiece> board[8][8];
 
     // --- Âm thanh ---
     std::map<std::string, sf::SoundBuffer> soundBuffers;
     std::map<std::string, sf::Sound> sounds;
 
 public:
+    Board(const Board& other);
+
     // Load toàn bộ tài nguyên (ảnh + âm thanh)
     bool loadAssets();
 
@@ -67,6 +71,8 @@ public:
     void startGame();
 
     // HÀM CẦN TRIỂN KHAI TRONG PHẦN LOGIC CỦA BOARD HIỆN TẠI:
+    std::unique_ptr<BasePiece> move_piece_for_ai(Position from, Position to);
+    void undo_move_for_ai(Position from, Position to, std::unique_ptr<BasePiece> capturedPiece);
     const BasePiece* get_piece_at(Position p) const; // Lấy quân cờ tại vị trí đó
     bool is_inside_board(Position p) const; // Kiểm tra vị trí đích đến của quân cờ có nằm trong bàn cờ hay không
     bool is_check(Color color) const; // Kiểm tra vua có bị chiếu hay không

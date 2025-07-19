@@ -53,4 +53,4 @@ void Game::startNewGame() {
     board.setPiece(0, 5, "bBishop");
     board.setPiece(0, 6, "bKnight");
     board.setPiece(0, 7, "bRook");
-}﻿
+}

@@ -137,3 +137,38 @@ void Board::promotePiece(int row, int col, const string& newPieceName) {
 void Board::startGame() {
     playSound("game-start");  // Phát âm thanh bắt đầu game
 }
+
+// NHỮNG HÀM CẦN TRIỂN KHAI TRONG PHẦN LOGIC CỦA BOARD: (Quang làm giùm phần này)
+
+const BasePiece* Board::get_piece_at(Position p) const
+{
+    return nullptr;
+}
+
+bool Board::is_inside_board(Position p) const
+{
+    return false;
+}
+
+bool Board::is_check(Color color) const
+{
+    return false;
+}
+
+bool Board::can_castle_rook(Position rookPos) const
+{
+    return false;
+}
+
+bool Board::is_square_under_attacked(Position pos, Color byColor) const
+{
+    return false;
+}
+
+bool Board::isCheckmate(Color color) const {
+    if (is_check(color)) {
+        // Giả sử không còn nước đi hợp lệ nữa thì là chiếu hết
+        return true; // Chỉ là giả lập
+    }
+    return false;
+}

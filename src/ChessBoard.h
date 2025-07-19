@@ -45,12 +45,12 @@ public:
     std::string getNameFromPiece(const BasePiece& piece) const {
         std::string name = (piece.get_color() == Color::White) ? "w" : "b";
         switch (piece.get_pieceType()) {
-            case PieceType::Pawn:   name += "Pawn"; break;
-            case PieceType::Rook:   name += "Rook"; break;
-            case PieceType::Knight: name += "Knight"; break;
-            case PieceType::Bishop: name += "Bishop"; break;
-            case PieceType::Queen:  name += "Queen"; break;
-            case PieceType::King:   name += "King"; break;
+        case PieceType::Pawn:   name += "Pawn"; break;
+        case PieceType::Rook:   name += "Rook"; break;
+        case PieceType::Knight: name += "Knight"; break;
+        case PieceType::Bishop: name += "Bishop"; break;
+        case PieceType::Queen:  name += "Queen"; break;
+        case PieceType::King:   name += "King"; break;
         }
         return name;
     }
@@ -62,7 +62,7 @@ public:
 
     // Phát âm thanh khi phong cấp quân cờ
     void promotePiece(int row, int col, const std::string& newPieceName);
-    
+
     // Phát âm thanh khi bắt đầu game
     void startGame();
 
@@ -72,6 +72,7 @@ public:
     bool is_check(Color color) const; // Kiểm tra vua có bị chiếu hay không
     bool can_castle_rook(Position rookPos) const; // Vua kiểm tra xe đi hay chưa để nhập thành
     bool is_square_under_attacked(Position pos, Color byColor) const; // Kiểm tra xem ô đó có an toàn để vua nhập thành không
+    bool isCheckmate(Color color) const;
 };
 
 #endif

@@ -67,17 +67,46 @@ bool Board::loadAssets() {
 }
 
 void Board::draw(sf::RenderWindow& window) {
-    window.draw(boardSprite);  // Vẽ bàn cờ lên cửa sổ
+    sf::Vector2u windowSize = window.getSize();
+    int tileSize = std::min(windowSize.x, windowSize.y) / 8;
+    int boardSize = tileSize * 8;
 
-    // Vẽ các quân cờ
+    // Tính vị trí để căn giữa bàn cờ (nếu cửa sổ không vuông)
+    int offsetX = (windowSize.x - boardSize) / 2;
+    int offsetY = (windowSize.y - boardSize) / 2;
+
+    // Scale ảnh nền bàn cờ
+    boardSprite.setScale(
+        static_cast<float>(boardSize) / boardTexture.getSize().x,
+        static_cast<float>(boardSize) / boardTexture.getSize().y
+    );
+    boardSprite.setPosition(static_cast<float>(offsetX), static_cast<float>(offsetY));
+    window.draw(boardSprite);
+
+    // Vẽ quân cờ
     for (int row = 0; row < 8; ++row) {
         for (int col = 0; col < 8; ++col) {
-            if (!pieceNames[row][col].empty()) {  // Nếu ô có quân cờ
-                window.draw(pieces[row][col]);  // Vẽ quân cờ tại vị trí [row][col]
+            if (!pieceNames[row][col].empty()) {
+                sf::Sprite& piece = pieces[row][col];
+
+                // Scale đúng kích thước ô
+                piece.setScale(
+                    static_cast<float>(tileSize) / piece.getTexture()->getSize().x,
+                    static_cast<float>(tileSize) / piece.getTexture()->getSize().y
+                );
+
+                // Đặt vị trí căn theo offset
+                piece.setPosition(
+                    offsetX + col * tileSize,
+                    offsetY + row * tileSize
+                );
+
+                window.draw(piece);
             }
         }
     }
 }
+
 
 void Board::setPiece(int row, int col, const string& name) {
     if (row < 0 || row >= 8 || col < 0 || col >= 8) return;  // Kiểm tra giới hạn bàn cờ
@@ -219,6 +248,14 @@ bool Board::is_square_under_attacked(Position pos, Color byColor) const {
                 }
             }
         }
+    }
+    return false;
+}
+
+bool Board::isCheckmate(Color color) const {
+    if (is_check(color)) {
+        // Giả sử không còn nước đi hợp lệ nữa thì là chiếu hết
+        return true; // Chỉ là giả lập
     }
     return false;
 }

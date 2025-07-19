@@ -1,184 +1,155 @@
-﻿#include "UIManager.h"
+#include "UIManager.h"
 #include <iostream>
 using namespace std;
 
-UIManager::UIManager() : window(sf::VideoMode(800, 600), "Chess Game") {
-    // Khởi tạo màu sắc
-    normalColor = sf::Color(70, 70, 70);    	//Màu nút khi không bị tác động
-	hoverColor = sf::Color(100, 100, 100);  // Màu nút khi rê chuột qua
-	pressedColor = sf::Color(50, 50, 50);   // Màu nút khi nhấn chuột
+// ===== HÀM KHỞI TẠO UI =====
+UIManager::UIManager()
+    : window(sf::VideoMode(800, 600), "Chess Game"), currentState(UIState::MainMenu) {
 
-    // Khởi tạo UI
+    // Gán màu cho các trạng thái nút
+    normalColor = sf::Color(70, 70, 70);
+    hoverColor = sf::Color(100, 100, 100);
+    pressedColor = sf::Color(50, 50, 50);
+
+    // Nếu tải tài nguyên thất bại → in lỗi và đóng cửa sổ
     if (!loadAssets()) {
         cout << "Failed to load assets!" << endl;
         window.close();
     }
+
+    // Thiết lập các thành phần giao diện
     initUI();
 }
 
+// ===== VÒNG LẶP CHÍNH CỦA GIAO DIỆN =====
 void UIManager::run() {
     while (window.isOpen()) {
-        handleEvents();
-        updateButtonStates();
-        drawUI();
+        handleEvents();  // Xử lý sự kiện (chuột, bàn phím,...)
+
+        // Nếu đang ở menu chính
+        if (currentState == UIState::MainMenu) {
+            updateButtonStates();  // Cập nhật màu nút theo chuột
+            drawUI();              // Vẽ giao diện menu
+        }
+        // Nếu đang chơi game
+        else if (currentState == UIState::Playing) {
+            game.update();              // Cập nhật logic game
+            game.render(window);        // Vẽ bàn cờ
+
+            // Nếu game kết thúc → quay lại menu
+            if (game.isGameOver()) {
+                currentState = UIState::MainMenu;
+                statusText.setString("Game Over! Back to menu.");
+            }
+        }
     }
 }
 
+// ===== TẢI FONT VÀ HÌNH NỀN =====
 bool UIManager::loadAssets() {
-    // Tải font chữ
-    if (!font.loadFromFile("assets/Fonts/arial.ttf")) {
-        cout << "Failed to load font!" << endl;
-        return false;
-    }
-
-    // Tải background
-    if (!backgroundTexture.loadFromFile("assets/images/menu_bg.jpg")) {
-        cout << "Failed to load background!" << endl;
-        return false;
-    }
+    if (!font.loadFromFile("assets/Fonts/arial.ttf")) return false;
+    if (!backgroundTexture.loadFromFile("assets/images/menu_bg.jpg")) return false;
     backgroundSprite.setTexture(backgroundTexture);
-
     return true;
 }
 
+// ===== KHỞI TẠO GIAO DIỆN (MENU) =====
 void UIManager::initUI() {
-    // Khởi tạo tiêu đề
+    // Tiêu đề
     titleText.setString("CHESS GAME");
     titleText.setFont(font);
     titleText.setCharacterSize(50);
     titleText.setFillColor(sf::Color::White);
     titleText.setPosition(250, 50);
 
-    // Khởi tạo nút Start
-    startButton.shape.setSize(sf::Vector2f(200, 50));
+    // Nút Start
+    startButton.shape.setSize({ 200, 50 });
     startButton.shape.setPosition(300, 200);
     startButton.shape.setFillColor(normalColor);
-
     startButton.text.setString("Start Game");
     startButton.text.setFont(font);
     startButton.text.setCharacterSize(24);
     startButton.text.setFillColor(sf::Color::White);
     startButton.text.setPosition(330, 210);
 
-    // Khởi tạo nút Restart
-    restartButton.shape.setSize(sf::Vector2f(200, 50));
-    restartButton.shape.setPosition(300, 300);
-    restartButton.shape.setFillColor(normalColor);
-
-    restartButton.text.setString("Restart");
-    restartButton.text.setFont(font);
-    restartButton.text.setCharacterSize(24);
-    restartButton.text.setFillColor(sf::Color::White);
-    restartButton.text.setPosition(350, 310);
-
-    // Khởi tạo nút Quit
-    quitButton.shape.setSize(sf::Vector2f(200, 50));
-    quitButton.shape.setPosition(300, 400);
+    // Nút Quit
+    quitButton.shape.setSize({ 200, 50 });
+    quitButton.shape.setPosition(300, 300);
     quitButton.shape.setFillColor(normalColor);
-
     quitButton.text.setString("Quit");
     quitButton.text.setFont(font);
     quitButton.text.setCharacterSize(24);
     quitButton.text.setFillColor(sf::Color::White);
-    quitButton.text.setPosition(370, 410);
+    quitButton.text.setPosition(370, 310);
 
-    // Khởi tạo text trạng thái
-    statusText.setString("");
+    // Text trạng thái (ví dụ: "Game Over!")
     statusText.setFont(font);
     statusText.setCharacterSize(24);
     statusText.setFillColor(sf::Color::White);
     statusText.setPosition(50, 500);
 }
 
+// ===== CẬP NHẬT MÀU CỦA NÚT =====
 void UIManager::updateButtonStates() {
+    // Lấy vị trí chuột trong cửa sổ
     sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
-    // Cập nhật trạng thái nút Start
-    if (startButton.shape.getGlobalBounds().contains(mousePos)) {
+    // Kiểm tra nút Start
+    if (startButton.shape.getGlobalBounds().contains(mousePos))
         startButton.shape.setFillColor(sf::Mouse::isButtonPressed(sf::Mouse::Left) ? pressedColor : hoverColor);
-    }
-    else {
+    else
         startButton.shape.setFillColor(normalColor);
-    }
 
-    // Cập nhật trạng thái nút Restart
-    if (restartButton.shape.getGlobalBounds().contains(mousePos)) {
-        restartButton.shape.setFillColor(sf::Mouse::isButtonPressed(sf::Mouse::Left) ? pressedColor : hoverColor);
-    }
-    else {
-        restartButton.shape.setFillColor(normalColor);
-    }
-
-    // Cập nhật trạng thái nút Quit
-    if (quitButton.shape.getGlobalBounds().contains(mousePos)) {
+    // Kiểm tra nút Quit
+    if (quitButton.shape.getGlobalBounds().contains(mousePos))
         quitButton.shape.setFillColor(sf::Mouse::isButtonPressed(sf::Mouse::Left) ? pressedColor : hoverColor);
-    }
-    else {
+    else
         quitButton.shape.setFillColor(normalColor);
-    }
 }
 
+// ===== VẼ TOÀN BỘ GIAO DIỆN MENU =====
 void UIManager::drawUI() {
     window.clear();
-
-    // Vẽ background
     window.draw(backgroundSprite);
-
-    // Vẽ tiêu đề
     window.draw(titleText);
-
-    // Vẽ các nút
     window.draw(startButton.shape);
     window.draw(startButton.text);
-
-    window.draw(restartButton.shape);
-    window.draw(restartButton.text);
-
     window.draw(quitButton.shape);
     window.draw(quitButton.text);
-
-    // Vẽ trạng thái
     window.draw(statusText);
-
     window.display();
 }
 
-// Kiểm tra xem nút có được nhấn hay không
+// ===== KIỂM TRA NÚT CÓ BỊ CLICK KHÔNG =====
 bool UIManager::isButtonClicked(const Button& button, const sf::Event& event) {
-    if (event.type == sf::Event::MouseButtonReleased &&
-        event.mouseButton.button == sf::Mouse::Left) {
-        return button.shape.getGlobalBounds().contains(
-            window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y))
-        );
-    }
-    return false;
+    return event.type == sf::Event::MouseButtonReleased &&
+        event.mouseButton.button == sf::Mouse::Left &&
+        button.shape.getGlobalBounds().contains(
+            window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y }));
 }
 
-//Xử lý các nút chức năng
+// ===== XỬ LÝ SỰ KIỆN (PHÍM, CHUỘT) =====
 void UIManager::handleEvents() {
     sf::Event event;
     while (window.pollEvent(event)) {
         if (event.type == sf::Event::Closed) {
-            window.close();
+            window.close();  // Người dùng bấm nút X
         }
 
-        /*=============Xử lý click nút=============*/
-
-        //Start
-        if (isButtonClicked(startButton, event)) {
-            game.startNewGame();
-            statusText.setString("Game started!");
+        // Nếu đang ở menu
+        if (currentState == UIState::MainMenu) {
+            if (isButtonClicked(startButton, event)) {
+                game.startNewGame();      // Bắt đầu ván mới
+                currentState = UIState::Playing;
+                statusText.setString(""); // Xóa thông báo cũ
+            }
+            else if (isButtonClicked(quitButton, event)) {
+                window.close();          // Thoát game
+            }
         }
-	// Restart
-        else if (isButtonClicked(restartButton, event)) {
-            game.restartGame();
-            statusText.setString("Game restarted!");
-        }
-	// Quit
-        else if (isButtonClicked(quitButton, event)) {
-            window.close();
+        // Nếu đang chơi game → chuyển sự kiện cho game xử lý
+        else if (currentState == UIState::Playing) {
+            game.handleInput(event);     // Gửi sự kiện vào bàn cờ
         }
     }
 }
-
-

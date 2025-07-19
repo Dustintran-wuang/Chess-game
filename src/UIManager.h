@@ -1,66 +1,67 @@
 #ifndef UIMANAGER_H
 #define UIMANAGER_H
 
-#include <SFML/Graphics.hpp>
-#include "Game.h"
+#include <SFML/Graphics.hpp>    // Thư viện đồ họa SFML
+#include "Game.h"               // Bao gồm lớp Game để xử lý logic trò chơi
 
+// Lớp quản lý toàn bộ giao diện người dùng của game
 class UIManager {
 private:
-    sf::RenderWindow window;    // Cửa sổ hiển thị
-    Game game;                  // Đối tượng game quản lý logic
-    
-    // Cấu trúc nút UI
-    struct Button {
-        sf::RectangleShape shape;   // Hình dạng nút
-        sf::Text text;              // Chữ trên nút
+    sf::RenderWindow window;    // Cửa sổ hiển thị chính
+    Game game;                  // Đối tượng điều khiển game
+
+    // ===== TRẠNG THÁI UI =====
+    enum class UIState {
+        MainMenu,   // Trạng thái ở menu chính
+        Playing     // Trạng thái đang chơi
     };
-    
-    // Thành phần UI
-    sf::Texture backgroundTexture;  // Texture nền
-    sf::Sprite backgroundSprite;    // Sprite hiển thị nền
-    sf::Font font;                  // Font chữ
-    
-    // Các nút chính
-    Button startButton;     // Nút bắt đầu
-    Button restartButton;   // Nút chơi lại
-    Button quitButton;      // Nút thoát
-    
-    // Các text hiển thị
-    sf::Text statusText;    // Hiển thị trạng thái
-    sf::Text titleText;     // Tiêu đề game
-    
-    // Màu sắc UI
+
+    UIState currentState;       // Trạng thái hiện tại của giao diện
+
+    // ===== CẤU TRÚC NÚT BẤM =====
+    struct Button {
+        sf::RectangleShape shape;   // Hình dạng hình chữ nhật của nút
+        sf::Text text;              // Văn bản hiển thị trên nút
+    };
+
+    // ===== THÀNH PHẦN GIAO DIỆN =====
+    sf::Texture backgroundTexture;  // Hình nền menu chính
+    sf::Sprite backgroundSprite;    // Sprite để vẽ hình nền
+    sf::Font font;                  // Font chữ dùng cho văn bản giao diện
+
+    // ===== NÚT GIAO DIỆN =====
+    Button startButton;     // Nút bắt đầu game
+    Button quitButton;      // Nút thoát game
+
+    // ===== VĂN BẢN HIỂN THỊ =====
+    sf::Text statusText;    // Hiển thị thông báo trạng thái (VD: Game Over)
+    sf::Text titleText;     // Hiển thị tiêu đề game (VD: CHESS GAME)
+
+    // ===== MÀU SẮC NÚT =====
     sf::Color normalColor;  // Màu bình thường
     sf::Color hoverColor;   // Màu khi di chuột qua
-    sf::Color pressedColor; // Màu khi nhấn
+    sf::Color pressedColor; // Màu khi nhấn chuột
 
 public:
-    // Constructor
-    UIManager();
-    
-    // Chạy vòng lặp game chính
-    void run();
-    
+    // ===== HÀM KHỞI TẠO =====
+    UIManager();            // Constructor
+
+    // ===== VÒNG LẶP CHÍNH =====
+    void run();             // Hàm chạy chính của giao diện
+
 private:
-    /* ===== CÁC HÀM KHỞI TẠO ===== */
-    // Khởi tạo giao diện
-    void initUI();
-    
-    // Tải tài nguyên (ảnh, font)
-    bool loadAssets();
-    
-    /* ===== CÁC HÀM XỬ LÝ UI ===== */
-    // Cập nhật trạng thái các nút
-    void updateButtonStates();
-    
-    // Vẽ toàn bộ giao diện
-    void drawUI();
-    
-    // Kiểm tra nút có được nhấn không
-    bool isButtonClicked(const Button& button, const sf::Event& event);
-    
-    // Xử lý sự kiện input
-    void handleEvents();
+
+    void initUI();          // Thiết lập giao diện và vị trí nút
+
+    bool loadAssets();      // Tải hình ảnh, font chữ,...
+
+    void updateButtonStates();   // Cập nhật màu nút theo vị trí chuột
+
+    void drawUI();               // Vẽ toàn bộ giao diện lên cửa sổ
+
+    bool isButtonClicked(const Button& button, const sf::Event& event); // Kiểm tra nút có bị nhấn
+
+    void handleEvents();                                                // Xử lý sự kiện 
 };
 
 #endif // UIMANAGER_H

@@ -37,17 +37,46 @@ bool Board::loadAssets() {
 }
 
 void Board::draw(sf::RenderWindow& window) {
-    window.draw(boardSprite);  // Vẽ bàn cờ lên cửa sổ
+    sf::Vector2u windowSize = window.getSize();
+    int tileSize = std::min(windowSize.x, windowSize.y) / 8;
+    int boardSize = tileSize * 8;
 
-    // Vẽ các quân cờ
+    // Tính vị trí để căn giữa bàn cờ (nếu cửa sổ không vuông)
+    int offsetX = (windowSize.x - boardSize) / 2;
+    int offsetY = (windowSize.y - boardSize) / 2;
+
+    // Scale ảnh nền bàn cờ
+    boardSprite.setScale(
+        static_cast<float>(boardSize) / boardTexture.getSize().x,
+        static_cast<float>(boardSize) / boardTexture.getSize().y
+    );
+    boardSprite.setPosition(static_cast<float>(offsetX), static_cast<float>(offsetY));
+    window.draw(boardSprite);
+
+    // Vẽ quân cờ
     for (int row = 0; row < 8; ++row) {
         for (int col = 0; col < 8; ++col) {
-            if (!pieceNames[row][col].empty()) {  // Nếu ô có quân cờ
-                window.draw(pieces[row][col]);  // Vẽ quân cờ tại vị trí [row][col]
+            if (!pieceNames[row][col].empty()) {
+                sf::Sprite& piece = pieces[row][col];
+
+                // Scale đúng kích thước ô
+                piece.setScale(
+                    static_cast<float>(tileSize) / piece.getTexture()->getSize().x,
+                    static_cast<float>(tileSize) / piece.getTexture()->getSize().y
+                );
+
+                // Đặt vị trí căn theo offset
+                piece.setPosition(
+                    offsetX + col * tileSize,
+                    offsetY + row * tileSize
+                );
+
+                window.draw(piece);
             }
         }
     }
 }
+
 
 void Board::setPiece(int row, int col, const string& name) {
     if (row < 0 || row >= 8 || col < 0 || col >= 8) return;  // Kiểm tra giới hạn bàn cờ
@@ -107,31 +136,4 @@ void Board::promotePiece(int row, int col, const string& newPieceName) {
 
 void Board::startGame() {
     playSound("game-start");  // Phát âm thanh bắt đầu game
-}
-
-// NHỮNG HÀM CẦN TRIỂN KHAI TRONG PHẦN LOGIC CỦA BOARD: (Quang làm giùm phần này)
-
-const BasePiece* Board::get_piece_at(Position p) const
-{
-    return nullptr;
-}
-
-bool Board::is_inside_board(Position p) const
-{
-    return false;
-}
-
-bool Board::is_check(Color color) const
-{
-    return false;
-}
-
-bool Board::can_castle_rook(Position rookPos) const
-{
-    return false;
-}
-
-bool Board::is_square_under_attacked(Position pos, Color byColor) const
-{
-    return false;
 }

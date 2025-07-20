@@ -1,14 +1,62 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\test\\github-tutorial-demo\\Chess-game\\",
+  "WorkspaceRootPath": "C:\\Users\\phtun\\Chess-game\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\test\\github-tutorial-demo\\Chess-game\\src\\BasePiece.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\phtun\\Chess-game\\src\\AIEngine.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\AIEngine.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\phtun\\Chess-game\\src\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\phtun\\Chess-game\\src\\UIManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\UIManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\phtun\\Chess-game\\src\\UIManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\UIManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\phtun\\Chess-game\\src\\ChessBoard.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\ChessBoard.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\phtun\\Chess-game\\src\\ChessBoard.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\ChessBoard.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\phtun\\Chess-game\\src\\Game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\Game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\phtun\\Chess-game\\src\\Game.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\Game.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\phtun\\Chess-game\\src\\AIEngine.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\AIEngine.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\phtun\\Chess-game\\src\\DragHandler.h||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\DragHandler.h||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\phtun\\Chess-game\\src\\King.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\King.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\phtun\\Chess-game\\src\\BasePiece.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\BasePiece.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\test\\github-tutorial-demo\\Chess-game\\src\\AIEngine.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\AIEngine.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\phtun\\Chess-game\\src\\Knight.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\Knight.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\phtun\\Chess-game\\CMakeLists.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:CMakeLists.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,33 +66,183 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "BasePiece.h",
-              "DocumentMoniker": "C:\\test\\github-tutorial-demo\\Chess-game\\src\\BasePiece.h",
-              "RelativeDocumentMoniker": "src\\BasePiece.h",
-              "ToolTip": "C:\\test\\github-tutorial-demo\\Chess-game\\src\\BasePiece.h",
-              "RelativeToolTip": "src\\BasePiece.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAABBAAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "UIManager.cpp",
+              "DocumentMoniker": "C:\\Users\\phtun\\Chess-game\\src\\UIManager.cpp",
+              "RelativeDocumentMoniker": "src\\UIManager.cpp",
+              "ToolTip": "C:\\Users\\phtun\\Chess-game\\src\\UIManager.cpp",
+              "RelativeToolTip": "src\\UIManager.cpp",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAkwCkAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-07-20T03:53:13.399Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "UIManager.h",
+              "DocumentMoniker": "C:\\Users\\phtun\\Chess-game\\src\\UIManager.h",
+              "RelativeDocumentMoniker": "src\\UIManager.h",
+              "ToolTip": "C:\\Users\\phtun\\Chess-game\\src\\UIManager.h",
+              "RelativeToolTip": "src\\UIManager.h",
+              "ViewState": "AgIAACEAAAAAAAAAAAAAACMAAAA/AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-07-04T06:52:01.659Z",
+              "WhenOpened": "2025-07-20T03:57:51.108Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "AIEngine.cpp",
+              "DocumentMoniker": "C:\\Users\\phtun\\Chess-game\\src\\AIEngine.cpp",
+              "RelativeDocumentMoniker": "src\\AIEngine.cpp",
+              "ToolTip": "C:\\Users\\phtun\\Chess-game\\src\\AIEngine.cpp",
+              "RelativeToolTip": "src\\AIEngine.cpp",
+              "ViewState": "AgIAABsAAAAAAAAAAAAAACYAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-07-20T03:47:46.407Z",
+              "IsPinned": true,
               "EditorCaption": ""
             },
             {
               "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Game.h",
+              "DocumentMoniker": "C:\\Users\\phtun\\Chess-game\\src\\Game.h",
+              "RelativeDocumentMoniker": "src\\Game.h",
+              "ToolTip": "C:\\Users\\phtun\\Chess-game\\src\\Game.h",
+              "RelativeToolTip": "src\\Game.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-07-04T07:10:28.6Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Game.cpp",
+              "DocumentMoniker": "C:\\Users\\phtun\\Chess-game\\src\\Game.cpp",
+              "RelativeDocumentMoniker": "src\\Game.cpp",
+              "ToolTip": "C:\\Users\\phtun\\Chess-game\\src\\Game.cpp",
+              "RelativeToolTip": "src\\Game.cpp",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAAADwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-07-20T03:52:41.747Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ChessBoard.h",
+              "DocumentMoniker": "C:\\Users\\phtun\\Chess-game\\src\\ChessBoard.h",
+              "RelativeDocumentMoniker": "src\\ChessBoard.h",
+              "ToolTip": "C:\\Users\\phtun\\Chess-game\\src\\ChessBoard.h",
+              "RelativeToolTip": "src\\ChessBoard.h",
+              "ViewState": "AgIAAEUAAAAAAAAAAAAAABwAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-07-04T06:59:01.463Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ChessBoard.cpp",
+              "DocumentMoniker": "C:\\Users\\phtun\\Chess-game\\src\\ChessBoard.cpp",
+              "RelativeDocumentMoniker": "src\\ChessBoard.cpp",
+              "ToolTip": "C:\\Users\\phtun\\Chess-game\\src\\ChessBoard.cpp",
+              "RelativeToolTip": "src\\ChessBoard.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAA1AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-07-04T07:17:04.526Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "main.cpp",
+              "DocumentMoniker": "C:\\Users\\phtun\\Chess-game\\src\\main.cpp",
+              "RelativeDocumentMoniker": "src\\main.cpp",
+              "ToolTip": "C:\\Users\\phtun\\Chess-game\\src\\main.cpp",
+              "RelativeToolTip": "src\\main.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-07-20T04:15:15.919Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "King.h",
+              "DocumentMoniker": "C:\\Users\\phtun\\Chess-game\\src\\King.h",
+              "RelativeDocumentMoniker": "src\\King.h",
+              "ToolTip": "C:\\Users\\phtun\\Chess-game\\src\\King.h",
+              "RelativeToolTip": "src\\King.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-07-04T07:11:13.553Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Knight.h",
+              "DocumentMoniker": "C:\\Users\\phtun\\Chess-game\\src\\Knight.h",
+              "RelativeDocumentMoniker": "src\\Knight.h",
+              "ToolTip": "C:\\Users\\phtun\\Chess-game\\src\\Knight.h",
+              "RelativeToolTip": "src\\Knight.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-07-04T07:10:26.77Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "DragHandler.h",
+              "DocumentMoniker": "C:\\Users\\phtun\\Chess-game\\src\\DragHandler.h",
+              "RelativeDocumentMoniker": "src\\DragHandler.h",
+              "ToolTip": "C:\\Users\\phtun\\Chess-game\\src\\DragHandler.h",
+              "RelativeToolTip": "src\\DragHandler.h",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAuwBQAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-07-04T06:56:13.855Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "CMakeLists.txt",
+              "DocumentMoniker": "C:\\Users\\phtun\\Chess-game\\CMakeLists.txt",
+              "RelativeDocumentMoniker": "CMakeLists.txt",
+              "ToolTip": "C:\\Users\\phtun\\Chess-game\\CMakeLists.txt",
+              "RelativeToolTip": "CMakeLists.txt",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2025-07-04T06:55:54.791Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "BasePiece.h",
+              "DocumentMoniker": "C:\\Users\\phtun\\Chess-game\\src\\BasePiece.h",
+              "RelativeDocumentMoniker": "src\\BasePiece.h",
+              "ToolTip": "C:\\Users\\phtun\\Chess-game\\src\\BasePiece.h",
+              "RelativeToolTip": "src\\BasePiece.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAABBAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-07-04T06:52:01.659Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
               "Title": "AIEngine.h",
-              "DocumentMoniker": "C:\\test\\github-tutorial-demo\\Chess-game\\src\\AIEngine.h",
+              "DocumentMoniker": "C:\\Users\\phtun\\Chess-game\\src\\AIEngine.h",
               "RelativeDocumentMoniker": "src\\AIEngine.h",
-              "ToolTip": "C:\\test\\github-tutorial-demo\\Chess-game\\src\\AIEngine.h",
+              "ToolTip": "C:\\Users\\phtun\\Chess-game\\src\\AIEngine.h",
               "RelativeToolTip": "src\\AIEngine.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-07-04T06:51:57.921Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-04T06:51:57.921Z"
             }
           ]
         }

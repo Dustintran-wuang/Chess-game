@@ -54,3 +54,7 @@ void Game::startNewGame() {
     board.setPiece(0, 6, "bKnight");
     board.setPiece(0, 7, "bRook");
 }
+
+void Game::setDifficulty(int depth) {
+    bot.setDifficulty(depth);  // Gọi xuống lớp ChessBot
+}

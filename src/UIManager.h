@@ -13,6 +13,7 @@ private:
     // ===== TRẠNG THÁI UI =====
     enum class UIState {
         MainMenu,   // Trạng thái ở menu chính
+		DifficultySelect, //Chọn độ khó
         Playing     // Trạng thái đang chơi
     };
 
@@ -32,6 +33,7 @@ private:
     // ===== NÚT GIAO DIỆN =====
     Button startButton;     // Nút bắt đầu game
     Button quitButton;      // Nút thoát game
+    std::vector<Button> difficultyButtons; // 8 nút chọn độ khó
 
     // ===== VĂN BẢN HIỂN THỊ =====
     sf::Text statusText;    // Hiển thị thông báo trạng thái (VD: Game Over)

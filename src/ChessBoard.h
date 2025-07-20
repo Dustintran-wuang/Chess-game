@@ -25,6 +25,9 @@ private:
     std::map<std::string, sf::Sound> sounds;
 
 public:
+
+    Board();  // Khai báo con trỏ mặc định
+
     Board(const Board& other);
 
     // Load toàn bộ tài nguyên (ảnh + âm thanh)

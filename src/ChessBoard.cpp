@@ -3,7 +3,13 @@
 
 using namespace std;
 
-#include "ChessBoard.h"
+// Hàm khởi tạo mặc định
+Board::Board() {
+    // Khởi tạo texture, pointer, v.v. nếu cần
+    for (int y = 0; y < 8; ++y)
+        for (int x = 0; x < 8; ++x)
+            board[y][x] = nullptr;
+}
 
 // Hàm khởi tạo sao chép (Copy Constructor)
 Board::Board(const Board& other) {

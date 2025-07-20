@@ -24,19 +24,16 @@ UIManager::UIManager()
 // ===== VÒNG LẶP CHÍNH CỦA GIAO DIỆN =====
 void UIManager::run() {
     while (window.isOpen()) {
-        handleEvents();  // Xử lý sự kiện (chuột, bàn phím,...)
+        handleEvents();
 
-        // Nếu đang ở menu chính
-        if (currentState == UIState::MainMenu) {
-            updateButtonStates();  // Cập nhật màu nút theo chuột
-            drawUI();              // Vẽ giao diện menu
+        if (currentState == UIState::MainMenu || currentState == UIState::DifficultySelect) {
+            updateButtonStates();
+            drawUI();
         }
-        // Nếu đang chơi game
         else if (currentState == UIState::Playing) {
-            game.update();              // Cập nhật logic game
-            game.render(window);        // Vẽ bàn cờ
+            game.update();
+            game.render(window);
 
-            // Nếu game kết thúc → quay lại menu
             if (game.isGameOver()) {
                 currentState = UIState::MainMenu;
                 statusText.setString("Game Over! Back to menu.");
@@ -44,6 +41,7 @@ void UIManager::run() {
         }
     }
 }
+
 
 // ===== TẢI FONT VÀ HÌNH NỀN =====
 bool UIManager::loadAssets() {
@@ -82,6 +80,22 @@ void UIManager::initUI() {
     quitButton.text.setFillColor(sf::Color::White);
     quitButton.text.setPosition(370, 310);
 
+	// Nút chọn độ khó (8 nút)
+    for (int i = 0; i < 8; ++i) {
+        Button btn;
+        btn.shape.setSize({ 150, 40 });
+        btn.shape.setFillColor(normalColor);
+        btn.shape.setPosition(100 + (i % 4) * 170, 400 + (i / 4) * 60);
+
+        btn.text.setFont(font);
+        btn.text.setCharacterSize(20);
+        btn.text.setFillColor(sf::Color::White);
+        btn.text.setString("Level " + std::to_string(i + 1));
+        btn.text.setPosition(btn.shape.getPosition().x + 30, btn.shape.getPosition().y + 5);
+
+        difficultyButtons.push_back(btn);
+    }
+
     // Text trạng thái (ví dụ: "Game Over!")
     statusText.setFont(font);
     statusText.setCharacterSize(24);
@@ -91,34 +105,53 @@ void UIManager::initUI() {
 
 // ===== CẬP NHẬT MÀU CỦA NÚT =====
 void UIManager::updateButtonStates() {
-    // Lấy vị trí chuột trong cửa sổ
     sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
-    // Kiểm tra nút Start
-    if (startButton.shape.getGlobalBounds().contains(mousePos))
-        startButton.shape.setFillColor(sf::Mouse::isButtonPressed(sf::Mouse::Left) ? pressedColor : hoverColor);
-    else
-        startButton.shape.setFillColor(normalColor);
+    if (currentState == UIState::MainMenu) {
+        if (startButton.shape.getGlobalBounds().contains(mousePos))
+            startButton.shape.setFillColor(sf::Mouse::isButtonPressed(sf::Mouse::Left) ? pressedColor : hoverColor);
+        else
+            startButton.shape.setFillColor(normalColor);
 
-    // Kiểm tra nút Quit
-    if (quitButton.shape.getGlobalBounds().contains(mousePos))
-        quitButton.shape.setFillColor(sf::Mouse::isButtonPressed(sf::Mouse::Left) ? pressedColor : hoverColor);
-    else
-        quitButton.shape.setFillColor(normalColor);
+        if (quitButton.shape.getGlobalBounds().contains(mousePos))
+            quitButton.shape.setFillColor(sf::Mouse::isButtonPressed(sf::Mouse::Left) ? pressedColor : hoverColor);
+        else
+            quitButton.shape.setFillColor(normalColor);
+    }
+    else if (currentState == UIState::DifficultySelect) {
+        for (auto& btn : difficultyButtons) {
+            if (btn.shape.getGlobalBounds().contains(mousePos))
+                btn.shape.setFillColor(sf::Mouse::isButtonPressed(sf::Mouse::Left) ? pressedColor : hoverColor);
+            else
+                btn.shape.setFillColor(normalColor);
+        }
+    }
 }
+
 
 // ===== VẼ TOÀN BỘ GIAO DIỆN MENU =====
 void UIManager::drawUI() {
     window.clear();
     window.draw(backgroundSprite);
-    window.draw(titleText);
-    window.draw(startButton.shape);
-    window.draw(startButton.text);
-    window.draw(quitButton.shape);
-    window.draw(quitButton.text);
+
+    if (currentState == UIState::MainMenu) {
+        window.draw(titleText);
+        window.draw(startButton.shape);
+        window.draw(startButton.text);
+        window.draw(quitButton.shape);
+        window.draw(quitButton.text);
+    }
+    else if (currentState == UIState::DifficultySelect) {
+        for (const auto& btn : difficultyButtons) {
+            window.draw(btn.shape);
+            window.draw(btn.text);
+        }
+    }
+
     window.draw(statusText);
     window.display();
 }
+
 
 // ===== KIỂM TRA NÚT CÓ BỊ CLICK KHÔNG =====
 bool UIManager::isButtonClicked(const Button& button, const sf::Event& event) {
@@ -136,20 +169,35 @@ void UIManager::handleEvents() {
             window.close();  // Người dùng bấm nút X
         }
 
-        // Nếu đang ở menu
+        // ======= MENU CHÍNH =======
         if (currentState == UIState::MainMenu) {
             if (isButtonClicked(startButton, event)) {
-                game.startNewGame();      // Bắt đầu ván mới
-                currentState = UIState::Playing;
-                statusText.setString(""); // Xóa thông báo cũ
+                currentState = UIState::DifficultySelect;  // Chuyển sang chọn độ khó
+                statusText.setString("Select Difficulty");
             }
             else if (isButtonClicked(quitButton, event)) {
-                window.close();          // Thoát game
+                window.close();
             }
         }
-        // Nếu đang chơi game → chuyển sự kiện cho game xử lý
+
+        // ======= CHỌN ĐỘ KHÓ =======
+        else if (currentState == UIState::DifficultySelect) {
+            for (int i = 0; i < difficultyButtons.size(); ++i) {
+                if (isButtonClicked(difficultyButtons[i], event)) {
+                    int level = i + 1;
+                    game.setDifficulty(level);     // Gán độ khó cho AI
+                    game.startNewGame();           // Bắt đầu ván mới
+                    currentState = UIState::Playing;
+                    statusText.setString("Difficulty: " + std::to_string(level));
+                    break;
+                }
+            }
+        }
+
+        // ======= ĐANG CHƠI GAME =======
         else if (currentState == UIState::Playing) {
-            game.handleInput(event);     // Gửi sự kiện vào bàn cờ
+            game.handleInput(event);  // Truyền sự kiện cho bàn cờ
         }
     }
 }
+

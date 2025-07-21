@@ -265,3 +265,10 @@ bool Board::isCheckmate(Color color) const {
     }
     return false;
 }
+
+// phần minh thêm
+sf::Sprite* Board::getPieceSpriteAt(Position pos) {
+    if (!is_inside_board(pos)) return nullptr;
+    if (pieceNames[pos.y][pos.x].empty()) return nullptr;
+    return &pieces[pos.y][pos.x];
+} // bổ trợ cho xử lý kéo thả quân

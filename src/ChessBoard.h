@@ -82,6 +82,10 @@ public:
     bool can_castle_rook(Position rookPos) const; // Vua kiểm tra xe đi hay chưa để nhập thành
     bool is_square_under_attacked(Position pos, Color byColor) const; // Kiểm tra xem ô đó có an toàn để vua nhập thành không
     bool isCheckmate(Color color) const;
+
+    // phần minh thêm:
+    sf::Sprite* getPieceSpriteAt(Position pos); // bổ trợ cho xử lý kéo thả quân
+
 };
 
 #endif

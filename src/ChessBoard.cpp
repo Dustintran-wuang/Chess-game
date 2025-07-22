@@ -140,34 +140,70 @@ void Board::playSound(const string& name) {
 
 void Board::movePiece(int fromRow, int fromCol, int toRow, int toCol) {
     // Kiểm tra giới hạn bàn cờ
-    if (fromRow < 0 || fromRow >= 8 || fromCol < 0 || fromCol >= 8 ||
-        toRow < 0 || toRow >= 8 || toCol < 0 || toCol >= 8) return;
+    if (!is_inside_board({fromCol, fromRow}) || !is_inside_board({toCol, toRow})) return;
 
-    // Kiểm tra nếu có quân cờ ở vị trí đích (ăn quân)
+    // Lấy quân đang di chuyển
+    BasePiece* movingPiece = board[fromRow][fromCol].get();
+    if (!movingPiece) return;
+
+    // Kiểm tra hợp lệ nếu cần
+    Position to{toCol, toRow};
+    if (!movingPiece->is_move_valid(*this, to)) return;
+
+    // Âm thanh
     if (!pieceNames[toRow][toCol].empty()) {
-        playSound("capture");  // Phát âm thanh ăn quân
-    }
-    else {
-        playSound("move");  // Phát âm thanh di chuyển thông thường
+        playSound("capture");
+    } else {
+        playSound("move");
     }
 
-    // Di chuyển quân cờ
-    pieceNames[toRow][toCol] = pieceNames[fromRow][fromCol];  // Di chuyển tên quân cờ
-    pieceNames[fromRow][fromCol] = "";  // Xóa tên quân cờ ở vị trí cũ
+    // Di chuyển logic
+    board[toRow][toCol] = std::move(board[fromRow][fromCol]);
+    board[fromRow][fromCol] = nullptr;
+    board[toRow][toCol]->set_pos(to);
 
-    // Cập nhật sprite
+    // Di chuyển hiển thị
+    pieceNames[toRow][toCol] = pieceNames[fromRow][fromCol];
+    pieceNames[fromRow][fromCol] = "";
+
     pieces[toRow][toCol].setTexture(*pieces[fromRow][fromCol].getTexture());
-    pieces[toRow][toCol].setPosition(toCol * 64, toRow * 64);  // Đặt vị trí mới
-    pieces[fromRow][fromCol].setTexture(sf::Texture());  // Xóa texture ở vị trí cũ
+    pieces[toRow][toCol].setPosition(toCol * 64, toRow * 64);
+    pieces[fromRow][fromCol].setTexture(sf::Texture());
 }
 
-void Board::promotePiece(int row, int col, const string& newPieceName) {
-    if (row < 0 || row >= 8 || col < 0 || col >= 8) return;  // Kiểm tra giới hạn
 
-    if (!pieceNames[row][col].empty()) {  // Nếu ô có quân cờ
-        setPiece(row, col, newPieceName);  // Đặt quân cờ mới
-        playSound("promote");  // Phát âm thanh phong cấp
+void Board::promotePiece(int row, int col, const string& newPieceName) {
+    if (row < 0 || row >= 8 || col < 0 || col >= 8) return;  // Giới hạn
+
+    // Nếu không có quân nào ở vị trí này => bỏ qua
+    if (!board[row][col]) return;
+
+    // Kiểm tra quân hiện tại có phải tốt không
+    if (board[row][col]->get_pieceType() != PieceType::Pawn) return;
+
+    // Lấy màu quân cờ hiện tại
+    Color color = board[row][col]->get_color();
+
+    // --- Phần logic ---
+    Position pos{col, row};
+
+    if (newPieceName == "wQueen" || newPieceName == "bQueen") {
+        board[row][col] = std::make_unique<Queen>(color, pos);
+    } else if (newPieceName == "wRook" || newPieceName == "bRook") {
+        board[row][col] = std::make_unique<Rook>(color, pos);
+    } else if (newPieceName == "wBishop" || newPieceName == "bBishop") {
+        board[row][col] = std::make_unique<Bishop>(color, pos);
+    } else if (newPieceName == "wKnight" || newPieceName == "bKnight") {
+        board[row][col] = std::make_unique<Knight>(color, pos);
+    } else {
+        return; // Không rõ tên quân được phong cấp => không làm gì
     }
+
+    // --- Phần hiển thị ---
+    setPiece(row, col, newPieceName);
+
+    // Âm thanh phong cấp
+    playSound("promote");
 }
 
 void Board::startGame() {

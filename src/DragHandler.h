@@ -1,35 +1,48 @@
-#ifndef DRAGHANDLER_H
-#define DRAGHANDLER_H
-
+#pragma once
 #include <SFML/Graphics.hpp>
 #include "BasePiece.h"
+#include <vector>
 
-
+// Forward declaration
 class Board;
 
 class DragHandler {
 private:
-    bool isDragging;                    // trạng thái đang kéo thả quân cờ hay không
-    Position startSquare;               // vị trí ô bàn cờ lúc bắt đầu kéo quân (dùng Position từ BasePiece.h)
-    sf::Sprite draggedPieceSprite;      // sprite của quân cờ đang được kéo
-    bool hasSprite;                     // có sprite cần vẽ hay không
-    Board* board;                       // con trỏ tới bàn cờ để lấy thông tin quân cờ và cập nhật nước đi
+    Board* board;
+    bool isDragging;
+    bool hasSprite;
+    Position startSquare;
+    sf::Sprite draggedPieceSprite;
+    Color currentTurn;
+    std::vector<Position> validMoves;
+
+    // Hàm hỗ trợ
+    bool hasPieceAt(Position pos);
+    sf::Sprite* getPieceSprite(Position pos);
+    void calculateValidMoves();
+    bool isValidMove(Position targetSquare) const;
+    bool wouldExposeKing(Position from, Position to) const;
+    void switchTurn();
+    void checkGameState();
+    void drawValidMoveHighlights(sf::RenderWindow& window);
 
 public:
     DragHandler(Board* gameBoard);
-
     ~DragHandler();
 
+    // Các hàm chính để xử lý kéo thả
     void start_Drag(Position square, sf::Vector2f mousePos);
     void update_Drag(sf::Vector2f mousePos);
     void end_Drag(Position targetSquare);
+
+    // Hàm kiểm tra trạng thái
     bool is_Dragging_Piece();
+
+    // Hàm vẽ
     void draw_Dragged_Piece(sf::RenderWindow& window);
 
-    //  hàm hổ trợ để tương tác với Board
-    bool hasPieceAt(Position pos);              // Kiểm tra có quân cờ tại vị trí
-    sf::Sprite* getPieceSprite(Position pos);   // Lấy sprite của quân cờ
-    Position getStartSquare() const;            // Lấy vị trí bắt đầu kéo
+    // Getter-Setter
+    Position getStartSquare() const;
+    void setCurrentTurn(Color turn);
+    Color getCurrentTurn() const;
 };
-
-#endif

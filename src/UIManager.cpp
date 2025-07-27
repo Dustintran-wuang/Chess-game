@@ -130,7 +130,6 @@ void UIManager::updateButtonStates() {
 
 // ===== VẼ TOÀN BỘ GIAO DIỆN MENU =====
 void UIManager::drawUI() {
-    window.clear();
     window.draw(backgroundSprite);
 
     if (currentState == UIState::MainMenu) {
@@ -148,8 +147,8 @@ void UIManager::drawUI() {
     }
 
     window.draw(statusText);
-    window.display();
 }
+
 
 
 // ===== KIỂM TRA NÚT CÓ BỊ CLICK KHÔNG =====

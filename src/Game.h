@@ -27,7 +27,6 @@ public:
     void render(sf::RenderWindow& window);          // Vẽ bàn cờ lên cửa sổ
     bool isGameOver() const;                        // Kiểm tra trạng thái kết thúc
     void Game::handleInput(const sf::Event& event, sf::RenderWindow& window);       // Xử lý input người chơi
-    void setDifficulty(int depth);                  // Thiết lập độ khó cho AI 
 };
 
 #endif

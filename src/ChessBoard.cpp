@@ -210,6 +210,11 @@ void Board::startGame() {
     playSound("game-start");  // Phát âm thanh bắt đầu game
 }
 
+void Board::setLogicPiece(int row, int col, std::unique_ptr<BasePiece> piece) {
+    if (row < 0 || row >= 8 || col < 0 || col >= 8) return;
+    board[row][col] = std::move(piece);
+}
+
 // NHỮNG HÀM CẦN TRIỂN KHAI TRONG PHẦN LOGIC CỦA BOARD: (Quang làm giùm phần này)
 // Hàm này di chuyển quân cờ và trả về quân cờ đã bị ăn
 std::unique_ptr<BasePiece> Board::move_piece_for_ai(Position from, Position to) {

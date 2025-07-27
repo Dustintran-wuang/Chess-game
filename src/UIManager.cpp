@@ -180,7 +180,6 @@ void UIManager::handleEvents() {
             for (int i = 0; i < difficultyButtons.size(); ++i) {
                 if (isButtonClicked(difficultyButtons[i], event)) {
                     int level = i + 1;
-                    game.setDifficulty(level);                      // Gán độ khó cho AI
                     game.startNewGame();                            // Bắt đầu ván mới
                     currentState = UIState::Playing;
                     statusText.setString("Difficulty: " + std::to_string(level));

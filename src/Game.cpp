@@ -13,9 +13,11 @@ void Game::update() {
 }
 
 void Game::render(sf::RenderWindow& window) {
-    window.clear();
     board.draw(window);
-    window.display();
+
+    if (dragHandler.is_Dragging_Piece()) {
+        dragHandler.draw_Dragged_Piece(window);
+    }
 }
 
 bool Game::isGameOver() const {

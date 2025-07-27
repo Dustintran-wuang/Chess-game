@@ -2,11 +2,11 @@
 #include "BasePiece.h"
 
 class Pawn : public BasePiece {
-public:
+private:
 	bool first_move = true;
 	bool just_moved_2step = false;
 
-private:
+public:
 	Pawn(Color color, Position pos)
 		: BasePiece(color, PieceType::Pawn, pos) {}
 

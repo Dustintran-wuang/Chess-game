@@ -76,6 +76,9 @@ public:
     // Phát âm thanh khi bắt đầu game
     void startGame();
 
+    //Set logic cho quân trong game
+    void setLogicPiece(int row, int col, std::unique_ptr<BasePiece> piece);
+
     // HÀM CẦN TRIỂN KHAI TRONG PHẦN LOGIC CỦA BOARD HIỆN TẠI:
     std::unique_ptr<BasePiece> move_piece_for_ai(Position from, Position to);
     void undo_move_for_ai(Position from, Position to, std::unique_ptr<BasePiece> capturedPiece);

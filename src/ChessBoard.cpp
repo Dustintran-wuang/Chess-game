@@ -1,3 +1,4 @@
+#include "Pawn.h"
 #include "ChessBoard.h"
 #include <iostream>
 
@@ -148,7 +149,18 @@ void Board::movePiece(int fromRow, int fromCol, int toRow, int toCol) {
 
     // Kiểm tra hợp lệ nếu cần
     Position to{toCol, toRow};
+    Position from{fromCol, fromRow};
     if (!movingPiece->is_move_valid(*this, to)) return;
+
+    Pawn* pawn = dynamic_cast<Pawn*>(movingPiece);
+    if (pawn) {
+        // Tính y (khoảng cách)
+        int dy = to.y - from.y;
+        dy = abs(dy);
+
+        pawn->set_just_moved_2step(dy == 2);
+        pawn->set_first_move(false);
+    }
 
     // Âm thanh
     if (!pieceNames[toRow][toCol].empty()) {

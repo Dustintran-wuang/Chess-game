@@ -141,15 +141,15 @@ void Board::playSound(const string& name) {
 
 void Board::movePiece(int fromRow, int fromCol, int toRow, int toCol) {
     // Kiểm tra giới hạn bàn cờ
-    if (!is_inside_board({fromCol, fromRow}) || !is_inside_board({toCol, toRow})) return;
+    if (!is_inside_board({ fromCol, fromRow }) || !is_inside_board({ toCol, toRow })) return;
 
     // Lấy quân đang di chuyển
     BasePiece* movingPiece = board[fromRow][fromCol].get();
     if (!movingPiece) return;
 
     // Kiểm tra hợp lệ nếu cần
-    Position to{toCol, toRow};
-    Position from{fromCol, fromRow};
+    Position to{ toCol, toRow };
+    Position from{ fromCol, fromRow };
     if (!movingPiece->is_move_valid(*this, to)) return;
 
     Pawn* pawn = dynamic_cast<Pawn*>(movingPiece);
@@ -162,15 +162,53 @@ void Board::movePiece(int fromRow, int fromCol, int toRow, int toCol) {
         pawn->set_first_move(false);
     }
 
-    // Âm thanh
-    if (!pieceNames[toRow][toCol].empty()) {
+    // Xử lý ăn En Passant
+    bool enPassant = false;
+    int capturedRow = -1;
+    int capturedCol = -1;
+
+    if (pawn) {
+        int dy = toRow - fromRow;
+        int dx = toCol - fromCol;
+
+        if (abs(dx) == 1 && dy == (pawn->get_color() == Color::White ? -1 : 1)) {
+            if (pieceNames[toRow][toCol].empty()) {
+                int sidePawnRow = fromRow;
+                int sidePawnCol = toCol;
+
+                BasePiece* sidePiece = board[sidePawnRow][sidePawnCol].get();
+                if (sidePiece &&
+                    sidePiece->get_pieceType() == PieceType::Pawn &&
+                    sidePiece->get_color() != pawn->get_color()) {
+
+                    Pawn* targetPawn = dynamic_cast<Pawn*>(sidePiece);
+                    if (targetPawn && targetPawn->did_just_move_2step()) {
+                        enPassant = true;
+                        capturedRow = sidePawnRow;
+                        capturedCol = sidePawnCol;
+                    }
+                }
+            }
+        }
+    }
+
+    // Xử lý âm thanh và ăn quân
+    if (enPassant) {
+        board[capturedRow][capturedCol] = nullptr;
+        pieceNames[capturedRow][capturedCol] = "";
+        pieces[capturedRow][capturedCol].setTexture(sf::Texture());
+
         playSound("capture");
-    } else {
+    }
+    else if (!pieceNames[toRow][toCol].empty()) {
+        playSound("capture");
+    }
+    else {
         playSound("move");
     }
 
     // Di chuyển logic
-    board[toRow][toCol] = std::move(board[fromRow][fromCol]);
+    board[toRow][toCol] = move(board[fromRow][fromCol]);
     board[fromRow][fromCol] = nullptr;
     board[toRow][toCol]->set_pos(to);
 

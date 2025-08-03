@@ -159,20 +159,6 @@ void Board::movePiece(int fromRow, int fromCol, int toRow, int toCol) {
         dy = abs(dy);
 
         pawn->set_just_moved_2step(dy == 2);
-
-        // Reset just_moved_2step cho tất cả các tốt khác
-        for (int y = 0; y < 8; ++y) {
-            for (int x = 0; x < 8; ++x) {
-                if (y == fromRow && x == fromCol) continue; // bỏ qua quân vừa đi
-        
-                BasePiece* p = board[y][x].get();
-                Pawn* otherPawn = dynamic_cast<Pawn*>(p);
-                if (otherPawn) {
-                    otherPawn->set_just_moved_2step(false);
-                }
-            }
-        }
-
         pawn->set_first_move(false);
     }
 
@@ -233,6 +219,17 @@ void Board::movePiece(int fromRow, int fromCol, int toRow, int toCol) {
     pieces[toRow][toCol].setTexture(*pieces[fromRow][fromCol].getTexture());
     pieces[toRow][toCol].setPosition(toCol * 64, toRow * 64);
     pieces[fromRow][fromCol].setTexture(sf::Texture());
+
+    // Reset just_moved_2step cho tất cả các pawn khác không phải quân vừa đi 2 bước
+    for (int y = 0; y < 8; ++y) {
+        for (int x = 0; x < 8; ++x) {
+            if (y == toRow && x == toCol) continue; // Bỏ qua quân vừa đi
+            Pawn* otherPawn = dynamic_cast<Pawn*>(board[y][x].get());
+            if (otherPawn) {
+                otherPawn->set_just_moved_2step(false);
+            }
+        }
+    }
 }
 
 

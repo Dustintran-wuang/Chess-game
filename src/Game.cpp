@@ -32,12 +32,21 @@ void Game::handleInput(const sf::Event& event, sf::RenderWindow& window) {
     int offsetY = (winSize.y - boardSize) / 2;
 
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-        sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
-        int col = (mousePos.x - offsetX) / tileSize;
-        int row = (mousePos.y - offsetY) / tileSize;
+    int mouseX = event.mouseButton.x;
+    int mouseY = event.mouseButton.y;
 
-        dragHandler.start_Drag({ col, row }, mousePos);
+    if (board.isShowingPromotion()) {
+        board.handlePromotionClick(mouseX, mouseY, window);
+        return; // Không xử lý gì thêm khi đang chọn phong cấp
     }
+
+    sf::Vector2f mousePos(mouseX, mouseY);
+    int col = (mousePos.x - offsetX) / tileSize;
+    int row = (mousePos.y - offsetY) / tileSize;
+
+    dragHandler.start_Drag({ col, row }, mousePos);
+}
+
 
     else if (event.type == sf::Event::MouseMoved) {
         sf::Vector2f mousePos(static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y));

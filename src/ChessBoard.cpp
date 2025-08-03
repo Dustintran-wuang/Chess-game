@@ -70,6 +70,20 @@ bool Board::loadAssets() {
         sounds[sound].setBuffer(soundBuffers[sound]);  // Gán buffer âm thanh cho đối tượng sound
     }
 
+    // Load UI chọn quân để phong
+    if (!wPromotionTexture.loadFromFile("assets/Board and Pieces/wPromotion.png")) {
+        cout << "Không thể tải ảnh chọn phong cấp!" << endl;
+        return false;
+    }
+    wPromotionSprite.setTexture(wPromotionTexture);
+
+    if (!bPromotionTexture.loadFromFile("assets/Board and Pieces/bPromotion.png")) {
+        cout << "Không thể tải ảnh chọn phong cấp!" << endl;
+        return false;
+    }
+    bPromotionSprite.setTexture(bPromotionTexture);
+
+
     return true;  // Trả về true nếu tải tất cả assets thành công
 }
 
@@ -112,8 +126,30 @@ void Board::draw(sf::RenderWindow& window) {
             }
         }
     }
-}
 
+    // Vẽ UI chọn quân để phong
+    if (showingPromotion) {
+        sf::Vector2u windowSize = window.getSize();
+        int tileSize = std::min(windowSize.x, windowSize.y) / 8;
+        int size = tileSize * 4; // dùng 4 ô = 2x2
+
+        if (wPromotion == true) {
+
+            wPromotionSprite.setScale(static_cast<float>(size) / wPromotionTexture.getSize().x, static_cast<float>(size) / wPromotionTexture.getSize().y);
+
+            wPromotionSprite.setPosition((windowSize.x - size) / 2.f, (windowSize.y - size) / 2.f);
+
+            window.draw(wPromotionSprite);
+        }
+        else {
+            bPromotionSprite.setScale(static_cast<float>(size) / bPromotionTexture.getSize().x, static_cast<float>(size) / bPromotionTexture.getSize().y);
+
+            bPromotionSprite.setPosition((windowSize.x - size) / 2.f, (windowSize.y - size) / 2.f);
+
+            window.draw(bPromotionSprite);
+        }
+    }
+}
 
 void Board::setPiece(int row, int col, const string& name) {
     if (row < 0 || row >= 8 || col < 0 || col >= 8) return;  // Kiểm tra giới hạn bàn cờ
@@ -136,6 +172,39 @@ void Board::playSound(const string& name) {
     }
     else {
         cout << "Không tìm thấy âm thanh " << name << "!" << endl;
+    }
+}
+
+void Board::handlePromotionClick(int mouseX, int mouseY, sf::RenderWindow& window) {
+    if (!showingPromotion) return;
+
+    sf::Vector2u windowSize = window.getSize();
+    int tileSize = std::min(windowSize.x, windowSize.y) / 8;
+    int size = tileSize * 4; // Promotion UI vẽ bằng 4 ô (2x2)
+
+    int offsetX = (windowSize.x - size) / 2;
+    int offsetY = (windowSize.y - size) / 2;
+
+    // Tính vị trí click trong promotionSprite
+    int relX = mouseX - offsetX;
+    int relY = mouseY - offsetY;
+
+    if (relX < 0 || relY < 0 || relX >= size || relY >= size) return;
+
+    int col = relX / (size / 2);
+    int row = relY / (size / 2);
+
+    string namePrefix = (promotionColor == Color::White) ? "w" : "b";
+    string newPiece;
+
+    if (row == 0 && col == 0) newPiece = namePrefix + "Knight";
+    else if (row == 0 && col == 1) newPiece = namePrefix + "Queen";
+    else if (row == 1 && col == 0) newPiece = namePrefix + "Bishop";
+    else if (row == 1 && col == 1) newPiece = namePrefix + "Rook";
+
+    if (!newPiece.empty()) {
+        promotePiece(promotionRow, promotionCol, newPiece);
+        showingPromotion = false;
     }
 }
 
@@ -220,6 +289,21 @@ void Board::movePiece(int fromRow, int fromCol, int toRow, int toCol) {
     pieces[toRow][toCol].setPosition(toCol * 64, toRow * 64);
     pieces[fromRow][fromCol].setTexture(sf::Texture());
 
+    // Phong tốt
+    if (pawn) {
+    if ((pawn->get_color() == Color::White && toRow == 0) ||
+        (pawn->get_color() == Color::Black && toRow == 7)) {
+        showingPromotion = true;
+        if (pawn->get_color() == Color::White) {
+            wPromotion = true;
+        }
+        else { wPromotion = false; }
+        promotionRow = toRow;
+        promotionCol = toCol;
+        promotionColor = pawn->get_color();
+    }
+}
+
     // Reset just_moved_2step cho tất cả các pawn khác không phải quân vừa đi 2 bước
     for (int y = 0; y < 8; ++y) {
         for (int x = 0; x < 8; ++x) {
@@ -231,7 +315,6 @@ void Board::movePiece(int fromRow, int fromCol, int toRow, int toCol) {
         }
     }
 }
-
 
 void Board::promotePiece(int row, int col, const string& newPieceName) {
     if (row < 0 || row >= 8 || col < 0 || col >= 8) return;  // Giới hạn

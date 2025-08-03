@@ -23,6 +23,17 @@ private:
     std::string pieceNames[8][8];                      // Tên quân cờ tại mỗi ô
     std::unique_ptr<BasePiece> board[8][8];
 
+    // Cho UI chọn phong cấp
+    sf::Texture wPromotionTexture;
+    sf::Sprite wPromotionSprite;
+    sf::Texture bPromotionTexture;
+    sf::Sprite bPromotionSprite;
+    bool showingPromotion = false;
+    bool wPromotion = false;
+    int promotionRow = -1;
+    int promotionCol = -1;
+    Color promotionColor; // Màu quân tốt để biết nên gán "w" hay "b"
+
     // --- Âm thanh ---
     std::map<std::string, sf::SoundBuffer> soundBuffers;
     std::map<std::string, sf::Sound> sounds;
@@ -80,6 +91,11 @@ public:
     void setLogicPiece(int row, int col, std::unique_ptr<BasePiece> piece);
 
     // HÀM CẦN TRIỂN KHAI TRONG PHẦN LOGIC CỦA BOARD HIỆN TẠI:
+    void handlePromotionClick(int mouseX, int mouseY, sf::RenderWindow& window);
+    bool isShowingPromotion() const {
+        return showingPromotion;
+    }
+
     std::unique_ptr<BasePiece> move_piece_for_ai(Position from, Position to);
     void undo_move_for_ai(Position from, Position to, std::unique_ptr<BasePiece> capturedPiece);
     const BasePiece* get_piece_at(Position p) const; // Lấy quân cờ tại vị trí đó

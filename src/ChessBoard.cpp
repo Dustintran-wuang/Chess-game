@@ -159,6 +159,20 @@ void Board::movePiece(int fromRow, int fromCol, int toRow, int toCol) {
         dy = abs(dy);
 
         pawn->set_just_moved_2step(dy == 2);
+
+        // Reset just_moved_2step cho tất cả các tốt khác
+        for (int y = 0; y < 8; ++y) {
+            for (int x = 0; x < 8; ++x) {
+                if (y == fromRow && x == fromCol) continue; // bỏ qua quân vừa đi
+        
+                BasePiece* p = board[y][x].get();
+                Pawn* otherPawn = dynamic_cast<Pawn*>(p);
+                if (otherPawn) {
+                    otherPawn->set_just_moved_2step(false);
+                }
+            }
+        }
+
         pawn->set_first_move(false);
     }
 

@@ -314,6 +314,13 @@ void Board::movePiece(int fromRow, int fromCol, int toRow, int toCol) {
             }
         }
     }
+
+    // Kiểm tra nếu nước đi này khiến vua đối phương bị chiếu => phát âm thanh "check"
+    Color currentColor = movingPiece->get_color();
+    Color opponentColor = (currentColor == Color::White) ? Color::Black : Color::White;
+    if (is_check(opponentColor)) {
+        playSound("check");
+    }
 }
 
 void Board::promotePiece(int row, int col, const string& newPieceName) {

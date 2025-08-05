@@ -24,6 +24,11 @@ struct Position {
     }
 };
 
+struct Move {
+        Position from;
+        Position to;
+};
+
 // Forward declaration
 class Board;
 

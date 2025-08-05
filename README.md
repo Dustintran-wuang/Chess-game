@@ -1,0 +1,1 @@
+cmake -DBOOST_ROOT="C:/Users/ASUS/boost_1_85_0/boost_1_85_0" -S . -B build

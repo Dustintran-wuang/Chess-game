@@ -3,7 +3,7 @@
 
 //#include "ChessBoard.h" sử dụng logic kiểm tra để biết GameOver chưa
 #include "ChessBoard.h"
-#include "AIEngine.cpp"
+#include "AIEngine.h"
 #include <SFML/Graphics.hpp>
 
 class Game {

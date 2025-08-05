@@ -1,4 +1,5 @@
 #include "ChessBoard.h"
+#include <sstream>
 #include <iostream>
 
 using namespace std;
@@ -241,7 +242,6 @@ void Board::undo_move_for_ai(Position from, Position to, std::unique_ptr<BasePie
 // Lấy quân cờ tại vị trí p
 const BasePiece* Board::get_piece_at(Position p) const {
     if (!is_inside_board(p)) return nullptr;
-    // Giả sử bạn có mảng board[8][8] lưu unique_ptr<BasePiece>
     return board[p.y][p.x] ? board[p.y][p.x].get() : nullptr;
 }
 
@@ -296,10 +296,60 @@ bool Board::is_square_under_attacked(Position pos, Color byColor) const {
 
 bool Board::isCheckmate(Color color) const {
     if (is_check(color)) {
-        // Giả sử không còn nước đi hợp lệ nữa thì là chiếu hết
         return true; // Chỉ là giả lập
     }
     return false;
+}
+
+//hàm bổ trợ cho Stockfish engine
+std::string Board::toFen(Color nextTurn) const {
+    std::stringstream fen;
+    for (int y = 0; y < 8; ++y) {
+        int emptySquares = 0;
+        for (int x = 0; x < 8; ++x) {
+            const BasePiece* piece = get_piece_at({x, y});
+            if (piece) {
+                if (emptySquares > 0) {
+                    fen << emptySquares;
+                    emptySquares = 0;
+                }
+                char p_char;
+                // Lấy ký tự quân cờ
+                switch (piece->get_pieceType()) {
+                    case PieceType::Pawn:   p_char = 'p'; break;
+                    case PieceType::Rook:   p_char = 'r'; break;
+                    case PieceType::Knight: p_char = 'n'; break;
+                    case PieceType::Bishop: p_char = 'b'; break;
+                    case PieceType::Queen:  p_char = 'q'; break;
+                    case PieceType::King:   p_char = 'k'; break;
+                }
+                // Chuyển thành chữ hoa cho quân trắng
+                if (piece->get_color() == Color::White) {
+                    fen << (char)toupper(p_char);
+                } else {
+                    fen << p_char;
+                }
+            } else {
+                emptySquares++;
+            }
+        }
+        if (emptySquares > 0) {
+            fen << emptySquares;
+        }
+        if (y < 7) {
+            fen << '/';
+        }
+    }
+
+    // Thêm lượt đi (w cho trắng, b cho đen)
+    fen << (nextTurn == Color::White ? " w" : " b");
+
+    // Chú ý: Đây là phiên bản đơn giản hóa. Một chuỗi FEN đầy đủ
+    // cần thông tin về nhập thành, bắt tốt qua đường, v.v.
+    // Với mục đích giao tiếp cơ bản, như này là đủ.
+    fen << " - - 0 1";
+
+    return fen.str();
 }
 
 // phần minh thêm

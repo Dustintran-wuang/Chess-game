@@ -1,0 +1,15 @@
+{
+  "name": "chessworld",
+  "version-string": "1.0.0",
+  "dependencies": [
+    "boost-process",
+    "sfml"
+  ],
+  "builtin-baseline": "df6921c0b6cdf95269a4a3093e267b59e4bf0f5b",
+    "overrides": [
+    { 
+        "name": "sfml", 
+        "version": "2.6.2"
+    }
+  ]
+}

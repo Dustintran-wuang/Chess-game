@@ -1,8 +1,20 @@
 #include "Game.h"
 
-Game::Game() : board(), dragHandler(&board), gameOver(false) {
+//Game::Game() : board(), dragHandler(&board), gameOver(false) {
+//    board.loadAssets();
+//}
+
+//New
+Game::Game() : board(), gameOver(false) {
     board.loadAssets();
+    dragHandler = new DragHandler(&board, this);
 }
+
+Game::~Game() {
+    delete dragHandler;
+}
+
+
 
 void Game::update() {
     // Logic kiểm tra thắng thua ở đây
@@ -15,8 +27,8 @@ void Game::update() {
 void Game::render(sf::RenderWindow& window) {
     board.draw(window);
 
-    if (dragHandler.is_Dragging_Piece()) {
-        dragHandler.draw_Dragged_Piece(window);
+    if (dragHandler->is_Dragging_Piece()) {
+        dragHandler->draw_Dragged_Piece(window);
     }
 }
 
@@ -31,34 +43,42 @@ void Game::handleInput(const sf::Event& event, sf::RenderWindow& window) {
     int offsetX = (winSize.x - boardSize) / 2;
     int offsetY = (winSize.y - boardSize) / 2;
 
+    auto getRotatedPosition = [&](int col, int row) -> Position {
+        if (currentMode == GameMode::PlayerVsPlayer && board.getRotation()) {
+            return Position{ 7 - col, 7 - row };
+        }
+        else {
+            return Position{ col, row };
+        }
+        };
+
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-    int mouseX = event.mouseButton.x;
-    int mouseY = event.mouseButton.y;
+        int mouseX = event.mouseButton.x;
+        int mouseY = event.mouseButton.y;
 
-    if (board.isShowingPromotion()) {
-        board.handlePromotionClick(mouseX, mouseY, window);
-        return; // Không xử lý gì thêm khi đang chọn phong cấp
+        if (board.isShowingPromotion()) {
+            board.handlePromotionClick(mouseX, mouseY, window);
+            return;
+        }
+
+        sf::Vector2f mousePos(mouseX, mouseY);
+        int col = (mousePos.x - offsetX) / tileSize;
+        int row = (mousePos.y - offsetY) / tileSize;
+
+        Position adjustedPos = getRotatedPosition(col, row);
+        dragHandler -> start_Drag(adjustedPos, mousePos);
     }
-
-    sf::Vector2f mousePos(mouseX, mouseY);
-    int col = (mousePos.x - offsetX) / tileSize;
-    int row = (mousePos.y - offsetY) / tileSize;
-
-    dragHandler.start_Drag({ col, row }, mousePos);
-}
-
-
     else if (event.type == sf::Event::MouseMoved) {
         sf::Vector2f mousePos(static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y));
-        dragHandler.update_Drag(mousePos);
+        dragHandler -> update_Drag(mousePos);
     }
-
     else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
         sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
         int col = (mousePos.x - offsetX) / tileSize;
         int row = (mousePos.y - offsetY) / tileSize;
 
-        dragHandler.end_Drag({ col, row });
+        Position adjustedPos = getRotatedPosition(col, row);
+        dragHandler -> end_Drag(adjustedPos);
     }
 }
 

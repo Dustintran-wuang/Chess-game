@@ -1,10 +1,5 @@
 #include "Game.h"
 
-//Game::Game() : board(), dragHandler(&board), gameOver(false) {
-//    board.loadAssets();
-//}
-
-//New
 Game::Game() : board(), gameOver(false) {
     board.loadAssets();
     dragHandler = new DragHandler(&board, this);

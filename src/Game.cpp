@@ -126,3 +126,20 @@ void Game::startNewGame() {
     board.setPiece(0, 7, "bRook");
     board.setLogicPiece(0, 7, std::make_unique<Rook>(Color::Black, Position{ 7,0 }));
 }
+
+void Game::setDifficulty(const std::string& diff) {
+    difficulty = diff;
+    // Nếu cần, bạn có thể dùng giá trị này để cấu hình AI
+}
+
+std::string Game::getDifficulty() const {
+    return difficulty;
+}
+
+void Game::setGameMode(GameMode mode) {
+    currentMode = mode;
+}
+
+GameMode Game::getGameMode() const {
+    return currentMode;
+}

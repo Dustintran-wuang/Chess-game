@@ -14,12 +14,20 @@
 #include "Queen.h"
 #include "King.h"
 
+enum class GameMode {
+    PlayerVsPlayer,
+    PlayerVsBot
+};
+
 class Game {
 private:
     Board board;
     bool gameOver;
     ChessBot bot;
     DragHandler dragHandler;
+
+    std::string difficulty; //Biến lưu độ khó (Easy/Medium/Hard)
+    GameMode currentMode;
 public:
     Game();                                         // Hàm khởi tạo
     void startNewGame();                            // Bắt đầu ván mới
@@ -27,6 +35,12 @@ public:
     void render(sf::RenderWindow& window);          // Vẽ bàn cờ lên cửa sổ
     bool isGameOver() const;                        // Kiểm tra trạng thái kết thúc
     void Game::handleInput(const sf::Event& event, sf::RenderWindow& window);       // Xử lý input người chơi
+
+    void setDifficulty(const std::string& diff);
+    std::string getDifficulty() const;
+
+    void setGameMode(GameMode mode);
+    GameMode getGameMode() const;
 };
 
 #endif

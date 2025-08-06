@@ -12,8 +12,6 @@ class Game;
 class DragHandler {
 private:
     Board* board;
-
-    //New
     Game* game;
 
     bool isDragging;

@@ -24,12 +24,16 @@ private:
     Board board;
     bool gameOver;
     ChessBot bot;
-    DragHandler dragHandler;
+
+    DragHandler* dragHandler;
 
     std::string difficulty; //Biến lưu độ khó (Easy/Medium/Hard)
     GameMode currentMode;
+
+    
 public:
     Game();                                         // Hàm khởi tạo
+    ~Game();
     void startNewGame();                            // Bắt đầu ván mới
     void update();                                  // Cập nhật logic
     void render(sf::RenderWindow& window);          // Vẽ bàn cờ lên cửa sổ
@@ -41,6 +45,7 @@ public:
 
     void setGameMode(GameMode mode);
     GameMode getGameMode() const;
+
 };
 
 #endif

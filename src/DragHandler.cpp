@@ -1,8 +1,9 @@
-﻿#include "DragHandler.h"
+#include "DragHandler.h"
 #include "ChessBoard.h"
+#include "Game.h"
 
-DragHandler::DragHandler(Board* gameBoard)
-    : board(gameBoard), isDragging(false), hasSprite(false), currentTurn(Color::White) {
+DragHandler::DragHandler(Board* gameBoard, Game* g)
+    : board(gameBoard), game(g), isDragging(false), hasSprite(false), currentTurn(Color::White) {
     startSquare = { -1, -1 };
 }
 
@@ -79,10 +80,16 @@ void DragHandler::end_Drag(Position targetSquare) {
 
                         validMove = true;
 
-                        // Chuyển lượt
+                        // Đổi lượt
                         switchTurn();
 
-                        // Kiểm tra chiếu/chiếu hết
+                        // Nếu chơi PvP, xoay bàn cờ
+                        if (game && game->getGameMode() == GameMode::PlayerVsPlayer) {
+                            bool currentRotation = board->getRotation();
+                            board->setRotation(!currentRotation);
+                        }
+
+                        // Kiểm tra trạng thái game (chiếu, chiếu hết)
                         checkGameState();
                     }
                 }
@@ -229,22 +236,24 @@ void DragHandler::drawValidMoveHighlights(sf::RenderWindow& window) {
         return;
     }
 
-    // Tính toán kích thước ô cờ dựa trên kích thước cửa sổ
     sf::Vector2u windowSize = window.getSize();
     int tileSize = std::min(windowSize.x, windowSize.y) / 8;
     int boardSize = tileSize * 8;
     int offsetX = (windowSize.x - boardSize) / 2;
     int offsetY = (windowSize.y - boardSize) / 2;
 
-    // Vẽ highlight cho từng nước đi hợp lệ
-    for (const Position& move : validMoves) {
-        sf::CircleShape highlight(tileSize * 0.15f); // Hình tròn nhỏ
-        highlight.setFillColor(sf::Color(0, 255, 0, 100)); // Xanh lá trong suốt
+    bool isRotated = board->getRotation();
 
-        // Đặt vị trí ở giữa ô
+    for (const Position& move : validMoves) {
+        int drawX = isRotated ? 7 - move.x : move.x;
+        int drawY = isRotated ? 7 - move.y : move.y;
+
+        sf::CircleShape highlight(tileSize * 0.15f);
+        highlight.setFillColor(sf::Color(0, 255, 0, 100)); // Màu xanh lá trong suốt
+
         highlight.setPosition(
-            offsetX + move.x * tileSize + tileSize / 2 - highlight.getRadius(),
-            offsetY + move.y * tileSize + tileSize / 2 - highlight.getRadius()
+            offsetX + drawX * tileSize + tileSize / 2 - highlight.getRadius(),
+            offsetY + drawY * tileSize + tileSize / 2 - highlight.getRadius()
         );
 
         window.draw(highlight);

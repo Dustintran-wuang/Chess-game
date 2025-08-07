@@ -17,19 +17,26 @@
 ## 📦 Thiết lập dự án
 
 ### 1. Clone repository
-
 ```bash
 git clone https://github.com/your-username/ChessWorld.git
 cd ChessWorld
+```
 
-2. Cài thư viện bằng vcpkg (khuyến nghị)
+### 2. Cài thư viện bằng vcpkg (khuyến nghị)
+```bash
 git clone https://github.com/microsoft/vcpkg.git
 ./vcpkg/bootstrap-vcpkg.bat
 ./vcpkg/vcpkg install sfml boost-filesystem boost-system boost-process
+```
 
-***LỆNH BUILD VỚI CMAKE
+### 3. LỆNH BUILD VỚI CMAKE
+```bash
 cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE=.path/to/vcpkg/scripts/buildsystems/vcpkg.cmake
 cmake --build build
-tải stockfish về và đưa stockfish.exe vào trong thư mục chung với ChessWorld.exe (build/bin/Debug)
+```
+### 4.TRƯỚC KHI RUN THÌ PHẢI:
+tải stockfish về và đưa stockfish.exe vào trong thư mục chung với ChessWorld.exe (ví dụ: build/bin/Debug)
+
+### 5.RUN
  
 ****LƯU Ý: NẾU TRÊN MÁY CÓ SFML TỪ TRƯỚC THÌ NÊN XÓA ĐI TRÁNH XUNG ĐỘT VỚI VCPKG KHI BUILD

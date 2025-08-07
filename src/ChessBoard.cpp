@@ -1,3 +1,4 @@
+#include "Pawn.h"
 #include "ChessBoard.h"
 #include <sstream>
 #include <iostream>
@@ -70,6 +71,20 @@ bool Board::loadAssets() {
         sounds[sound].setBuffer(soundBuffers[sound]);  // Gán buffer âm thanh cho đối tượng sound
     }
 
+    // Load UI chọn quân để phong
+    if (!wPromotionTexture.loadFromFile("assets/Board and Pieces/wPromotion.png")) {
+        cout << "Không thể tải ảnh chọn phong cấp!" << endl;
+        return false;
+    }
+    wPromotionSprite.setTexture(wPromotionTexture);
+
+    if (!bPromotionTexture.loadFromFile("assets/Board and Pieces/bPromotion.png")) {
+        cout << "Không thể tải ảnh chọn phong cấp!" << endl;
+        return false;
+    }
+    bPromotionSprite.setTexture(bPromotionTexture);
+
+
     return true;  // Trả về true nếu tải tất cả assets thành công
 }
 
@@ -112,8 +127,30 @@ void Board::draw(sf::RenderWindow& window) {
             }
         }
     }
-}
 
+    // Vẽ UI chọn quân để phong
+    if (showingPromotion) {
+        sf::Vector2u windowSize = window.getSize();
+        int tileSize = std::min(windowSize.x, windowSize.y) / 8;
+        int size = tileSize * 4; // dùng 4 ô = 2x2
+
+        if (wPromotion == true) {
+
+            wPromotionSprite.setScale(static_cast<float>(size) / wPromotionTexture.getSize().x, static_cast<float>(size) / wPromotionTexture.getSize().y);
+
+            wPromotionSprite.setPosition((windowSize.x - size) / 2.f, (windowSize.y - size) / 2.f);
+
+            window.draw(wPromotionSprite);
+        }
+        else {
+            bPromotionSprite.setScale(static_cast<float>(size) / bPromotionTexture.getSize().x, static_cast<float>(size) / bPromotionTexture.getSize().y);
+
+            bPromotionSprite.setPosition((windowSize.x - size) / 2.f, (windowSize.y - size) / 2.f);
+
+            window.draw(bPromotionSprite);
+        }
+    }
+}
 
 void Board::setPiece(int row, int col, const string& name) {
     if (row < 0 || row >= 8 || col < 0 || col >= 8) return;  // Kiểm tra giới hạn bàn cờ
@@ -139,27 +176,109 @@ void Board::playSound(const string& name) {
     }
 }
 
+void Board::handlePromotionClick(int mouseX, int mouseY, sf::RenderWindow& window) {
+    if (!showingPromotion) return;
+
+    sf::Vector2u windowSize = window.getSize();
+    int tileSize = std::min(windowSize.x, windowSize.y) / 8;
+    int size = tileSize * 4; // Promotion UI vẽ bằng 4 ô (2x2)
+
+    int offsetX = (windowSize.x - size) / 2;
+    int offsetY = (windowSize.y - size) / 2;
+
+    // Tính vị trí click trong promotionSprite
+    int relX = mouseX - offsetX;
+    int relY = mouseY - offsetY;
+
+    if (relX < 0 || relY < 0 || relX >= size || relY >= size) return;
+
+    int col = relX / (size / 2);
+    int row = relY / (size / 2);
+
+    string namePrefix = (promotionColor == Color::White) ? "w" : "b";
+    string newPiece;
+
+    if (row == 0 && col == 0) newPiece = namePrefix + "Knight";
+    else if (row == 0 && col == 1) newPiece = namePrefix + "Queen";
+    else if (row == 1 && col == 0) newPiece = namePrefix + "Bishop";
+    else if (row == 1 && col == 1) newPiece = namePrefix + "Rook";
+
+    if (!newPiece.empty()) {
+        promotePiece(promotionRow, promotionCol, newPiece);
+        showingPromotion = false;
+    }
+}
+
 void Board::movePiece(int fromRow, int fromCol, int toRow, int toCol) {
     // Kiểm tra giới hạn bàn cờ
-    if (!is_inside_board({fromCol, fromRow}) || !is_inside_board({toCol, toRow})) return;
+    if (!is_inside_board({ fromCol, fromRow }) || !is_inside_board({ toCol, toRow })) return;
 
     // Lấy quân đang di chuyển
     BasePiece* movingPiece = board[fromRow][fromCol].get();
     if (!movingPiece) return;
 
     // Kiểm tra hợp lệ nếu cần
-    Position to{toCol, toRow};
+    Position to{ toCol, toRow };
+    Position from{ fromCol, fromRow };
     if (!movingPiece->is_move_valid(*this, to)) return;
 
-    // Âm thanh
-    if (!pieceNames[toRow][toCol].empty()) {
+    Pawn* pawn = dynamic_cast<Pawn*>(movingPiece);
+    if (pawn) {
+        // Tính y (khoảng cách)
+        int dy = to.y - from.y;
+        dy = abs(dy);
+
+        pawn->set_just_moved_2step(dy == 2);
+        pawn->set_first_move(false);
+    }
+
+    // Xử lý ăn En Passant
+    bool enPassant = false;
+    int capturedRow = -1;
+    int capturedCol = -1;
+
+    if (pawn) {
+        int dy = toRow - fromRow;
+        int dx = toCol - fromCol;
+
+        if (abs(dx) == 1 && dy == (pawn->get_color() == Color::White ? -1 : 1)) {
+            if (pieceNames[toRow][toCol].empty()) {
+                int sidePawnRow = fromRow;
+                int sidePawnCol = toCol;
+
+                BasePiece* sidePiece = board[sidePawnRow][sidePawnCol].get();
+                if (sidePiece &&
+                    sidePiece->get_pieceType() == PieceType::Pawn &&
+                    sidePiece->get_color() != pawn->get_color()) {
+
+                    Pawn* targetPawn = dynamic_cast<Pawn*>(sidePiece);
+                    if (targetPawn && targetPawn->did_just_move_2step()) {
+                        enPassant = true;
+                        capturedRow = sidePawnRow;
+                        capturedCol = sidePawnCol;
+                    }
+                }
+            }
+        }
+    }
+
+    // Xử lý âm thanh và ăn quân
+    if (enPassant) {
+        board[capturedRow][capturedCol] = nullptr;
+        pieceNames[capturedRow][capturedCol] = "";
+        pieces[capturedRow][capturedCol].setTexture(sf::Texture());
+
         playSound("capture");
-    } else {
+    }
+    else if (!pieceNames[toRow][toCol].empty()) {
+        playSound("capture");
+    }
+    else {
         playSound("move");
     }
 
     // Di chuyển logic
-    board[toRow][toCol] = std::move(board[fromRow][fromCol]);
+    board[toRow][toCol] = move(board[fromRow][fromCol]);
     board[fromRow][fromCol] = nullptr;
     board[toRow][toCol]->set_pos(to);
 
@@ -170,8 +289,40 @@ void Board::movePiece(int fromRow, int fromCol, int toRow, int toCol) {
     pieces[toRow][toCol].setTexture(*pieces[fromRow][fromCol].getTexture());
     pieces[toRow][toCol].setPosition(toCol * 64, toRow * 64);
     pieces[fromRow][fromCol].setTexture(sf::Texture());
+
+    // Phong tốt
+    if (pawn) {
+    if ((pawn->get_color() == Color::White && toRow == 0) ||
+        (pawn->get_color() == Color::Black && toRow == 7)) {
+        showingPromotion = true;
+        if (pawn->get_color() == Color::White) {
+            wPromotion = true;
+        }
+        else { wPromotion = false; }
+        promotionRow = toRow;
+        promotionCol = toCol;
+        promotionColor = pawn->get_color();
+    }
 }
 
+    // Reset just_moved_2step cho tất cả các pawn khác không phải quân vừa đi 2 bước
+    for (int y = 0; y < 8; ++y) {
+        for (int x = 0; x < 8; ++x) {
+            if (y == toRow && x == toCol) continue; // Bỏ qua quân vừa đi
+            Pawn* otherPawn = dynamic_cast<Pawn*>(board[y][x].get());
+            if (otherPawn) {
+                otherPawn->set_just_moved_2step(false);
+            }
+        }
+    }
+
+    // Kiểm tra nếu nước đi này khiến vua đối phương bị chiếu => phát âm thanh "check"
+    Color currentColor = movingPiece->get_color();
+    Color opponentColor = (currentColor == Color::White) ? Color::Black : Color::White;
+    if (is_check(opponentColor)) {
+        playSound("check");
+    }
+}
 
 void Board::promotePiece(int row, int col, const string& newPieceName) {
     if (row < 0 || row >= 8 || col < 0 || col >= 8) return;  // Giới hạn
@@ -209,6 +360,11 @@ void Board::promotePiece(int row, int col, const string& newPieceName) {
 
 void Board::startGame() {
     playSound("game-start");  // Phát âm thanh bắt đầu game
+}
+
+void Board::setLogicPiece(int row, int col, std::unique_ptr<BasePiece> piece) {
+    if (row < 0 || row >= 8 || col < 0 || col >= 8) return;
+    board[row][col] = std::move(piece);
 }
 
 // NHỮNG HÀM CẦN TRIỂN KHAI TRONG PHẦN LOGIC CỦA BOARD: (Quang làm giùm phần này)

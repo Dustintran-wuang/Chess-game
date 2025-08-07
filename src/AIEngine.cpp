@@ -102,7 +102,7 @@ int ChessBot::minimax(Board& board, int depth, int alpha, int beta, bool isMaxim
 }
 
 Move ChessBot::findBestMove(Board& board, Color aiColor) {
-    std::vector<Move> allMoves = generateAllMoves(board, aiColor);
+    std::vector<Move> allMoves = generateAllMoves( board, aiColor);
     if (allMoves.empty()) {
         return Move{{-1,-1}, {-1,-1}}; // Không có nước đi nào
     }

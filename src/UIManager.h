@@ -31,6 +31,9 @@ private:
     sf::Font font;                  // Font chữ dùng cho văn bản giao diện
 
     // ===== NÚT GIAO DIỆN =====
+    Button pvpButton; // Nút Player vs Player
+    Button pvbButton; // Nút Player vs Bot
+
     Button startButton;     // Nút bắt đầu game
     Button quitButton;      // Nút thoát game
     std::vector<Button> difficultyButtons; // 8 nút chọn độ khó

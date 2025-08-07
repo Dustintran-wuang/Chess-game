@@ -6,9 +6,14 @@
 // Forward declaration
 class Board;
 
+//New
+class Game;
+
 class DragHandler {
 private:
     Board* board;
+    Game* game;
+
     bool isDragging;
     bool hasSprite;
     Position startSquare;
@@ -28,6 +33,7 @@ private:
 
 public:
     DragHandler(Board* gameBoard);
+    DragHandler(Board* gameBoard, Game* g);
     ~DragHandler();
 
     // Các hàm chính để xử lý kéo thả

@@ -79,21 +79,51 @@ void UIManager::initUI() {
     quitButton.text.setFillColor(sf::Color::White);
     quitButton.text.setPosition(370, 310);
 
-	// Nút chọn độ khó (8 nút)
-    for (int i = 0; i < 8; ++i) {
+    // Nút PvP
+    pvpButton.shape.setSize({ 200, 50 });
+    pvpButton.shape.setPosition(300, 180);
+    pvpButton.shape.setFillColor(normalColor);
+    pvpButton.text.setFont(font);
+    pvpButton.text.setCharacterSize(24);
+    pvpButton.text.setFillColor(sf::Color::White);
+    pvpButton.text.setString("Player vs Player");
+    pvpButton.text.setPosition(310, 190);
+
+    // Nút PvBot
+    pvbButton.shape.setSize({ 200, 50 });
+    pvbButton.shape.setPosition(300, 260);
+    pvbButton.shape.setFillColor(normalColor);
+    pvbButton.text.setFont(font);
+    pvbButton.text.setCharacterSize(24);
+    pvbButton.text.setFillColor(sf::Color::White);
+    pvbButton.text.setString("Player vs Bot");
+    pvbButton.text.setPosition(320, 270);
+
+    // Nút Quit lùi xuống một chút
+    quitButton.shape.setPosition(300, 340);
+    quitButton.text.setPosition(370, 350);
+
+	// Nút chọn độ khó (3 nút)
+    vector<string> labels = { "Easy", "Medium", "Hard" };
+
+    for (int i = 0; i < 3; ++i) {
         Button btn;
-        btn.shape.setSize({ 150, 40 });
+        btn.shape.setSize({ 200, 50 });
         btn.shape.setFillColor(normalColor);
-        btn.shape.setPosition(100 + (i % 4) * 170, 400 + (i / 4) * 60);
+        btn.shape.setPosition(300, 200 + i * 80);
 
         btn.text.setFont(font);
-        btn.text.setCharacterSize(20);
+        btn.text.setCharacterSize(24);
         btn.text.setFillColor(sf::Color::White);
-        btn.text.setString("Level " + std::to_string(i + 1));
-        btn.text.setPosition(btn.shape.getPosition().x + 30, btn.shape.getPosition().y + 5);
+        btn.text.setString(labels[i]);
+        btn.text.setPosition(
+            btn.shape.getPosition().x + 50,
+            btn.shape.getPosition().y + 10
+        );
 
         difficultyButtons.push_back(btn);
     }
+
 
     // Text trạng thái (ví dụ: "Game Over!")
     statusText.setFont(font);
@@ -116,6 +146,16 @@ void UIManager::updateButtonStates() {
             quitButton.shape.setFillColor(sf::Mouse::isButtonPressed(sf::Mouse::Left) ? pressedColor : hoverColor);
         else
             quitButton.shape.setFillColor(normalColor);
+
+        if (pvpButton.shape.getGlobalBounds().contains(mousePos))
+            pvpButton.shape.setFillColor(sf::Mouse::isButtonPressed(sf::Mouse::Left) ? pressedColor : hoverColor);
+        else
+            pvpButton.shape.setFillColor(normalColor);
+
+        if (pvbButton.shape.getGlobalBounds().contains(mousePos))
+            pvbButton.shape.setFillColor(sf::Mouse::isButtonPressed(sf::Mouse::Left) ? pressedColor : hoverColor);
+        else
+            pvbButton.shape.setFillColor(normalColor);
     }
     else if (currentState == UIState::DifficultySelect) {
         for (auto& btn : difficultyButtons) {
@@ -134,11 +174,14 @@ void UIManager::drawUI() {
 
     if (currentState == UIState::MainMenu) {
         window.draw(titleText);
-        window.draw(startButton.shape);
-        window.draw(startButton.text);
+        window.draw(pvpButton.shape);
+        window.draw(pvpButton.text);
+        window.draw(pvbButton.shape);
+        window.draw(pvbButton.text);
         window.draw(quitButton.shape);
         window.draw(quitButton.text);
     }
+
     else if (currentState == UIState::DifficultySelect) {
         for (const auto& btn : difficultyButtons) {
             window.draw(btn.shape);
@@ -166,23 +209,34 @@ void UIManager::handleEvents() {
         if (event.type == sf::Event::Closed)
             window.close();             // Người dùng bấm nút X
 
+        //New
         if (currentState == UIState::MainMenu) {
-            if (isButtonClicked(startButton, event)) {
-                currentState = UIState::DifficultySelect;           // Chuyển sang chọn độ khó
+            if (isButtonClicked(pvpButton, event)) {
+                game.setGameMode(GameMode::PlayerVsPlayer);
+                game.startNewGame();
+                currentState = UIState::Playing;
+                statusText.setString("Mode: PvP");
+            }
+            else if (isButtonClicked(pvbButton, event)) {
+                game.setGameMode(GameMode::PlayerVsBot);
+                currentState = UIState::DifficultySelect;
                 statusText.setString("Select Difficulty");
             }
             else if (isButtonClicked(quitButton, event)) {
                 window.close();
             }
         }
+
         // ======= CHỌN ĐỘ KHÓ =======
-        else if (currentState == UIState::DifficultySelect) {           
+        else if (currentState == UIState::DifficultySelect) {
             for (int i = 0; i < difficultyButtons.size(); ++i) {
                 if (isButtonClicked(difficultyButtons[i], event)) {
-                    int level = i + 1;
-                    game.startNewGame();                            // Bắt đầu ván mới
+                    string difficulty = difficultyButtons[i].text.getString();
+                    game.setDifficulty(difficulty);
+                    game.setGameMode(GameMode::PlayerVsBot);
+                    game.startNewGame();
                     currentState = UIState::Playing;
-                    statusText.setString("Difficulty: " + std::to_string(level));
+                    statusText.setString("Difficulty: " + difficulty);
                     break;
                 }
             }
@@ -194,4 +248,3 @@ void UIManager::handleEvents() {
         }
     }
 }
-

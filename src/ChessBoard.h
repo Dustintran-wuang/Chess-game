@@ -38,6 +38,8 @@ private:
     std::map<std::string, sf::SoundBuffer> soundBuffers;
     std::map<std::string, sf::Sound> sounds;
 
+    //New
+    bool rotation = false;
 public:
 
     Board();  // Khai báo con trỏ mặc định
@@ -109,6 +111,9 @@ public:
 
     // phần minh thêm:
     sf::Sprite* getPieceSpriteAt(Position pos); // bổ trợ cho xử lý kéo thả quân
+
+    void setRotation(bool r) { rotation = r; }
+    bool getRotation() const { return rotation; }
 
 };
 

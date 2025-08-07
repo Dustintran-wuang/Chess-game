@@ -93,64 +93,58 @@ void Board::draw(sf::RenderWindow& window) {
     int tileSize = std::min(windowSize.x, windowSize.y) / 8;
     int boardSize = tileSize * 8;
 
-    // Tính vị trí để căn giữa bàn cờ (nếu cửa sổ không vuông)
     int offsetX = (windowSize.x - boardSize) / 2;
     int offsetY = (windowSize.y - boardSize) / 2;
 
-    // Scale ảnh nền bàn cờ
-    boardSprite.setScale(
-        static_cast<float>(boardSize) / boardTexture.getSize().x,
-        static_cast<float>(boardSize) / boardTexture.getSize().y
-    );
-    boardSprite.setPosition(static_cast<float>(offsetX), static_cast<float>(offsetY));
-    window.draw(boardSprite);
+    // Vẽ bàn cờ
+    for (int row = 0; row < 8; ++row) {
+        for (int col = 0; col < 8; ++col) {
+            int drawCol = col;
+            int drawRow = row;
+
+            if (rotation) {
+                drawCol = 7 - col;
+                drawRow = 7 - row;
+            }
+
+            sf::RectangleShape square(sf::Vector2f(tileSize, tileSize));
+            square.setPosition(offsetX + drawCol * tileSize, offsetY + drawRow * tileSize);
+
+            if ((row + col) % 2 == 0) {
+                square.setFillColor(sf::Color(240, 217, 181)); // màu sáng
+            }
+            else {
+                square.setFillColor(sf::Color(181, 136, 99));  // màu tối
+            }
+
+            window.draw(square);
+        }
+    }
 
     // Vẽ quân cờ
     for (int row = 0; row < 8; ++row) {
         for (int col = 0; col < 8; ++col) {
-            if (!pieceNames[row][col].empty()) {
-                sf::Sprite& piece = pieces[row][col];
+            sf::Sprite* sprite = getPieceSpriteAt(Position{ col, row });
+            if (sprite) {
+                int drawCol = col;
+                int drawRow = row;
 
-                // Scale đúng kích thước ô
-                piece.setScale(
-                    static_cast<float>(tileSize) / piece.getTexture()->getSize().x,
-                    static_cast<float>(tileSize) / piece.getTexture()->getSize().y
-                );
+                if (rotation) {
+                    drawCol = 7 - col;
+                    drawRow = 7 - row;
+                }
 
-                // Đặt vị trí căn theo offset
-                piece.setPosition(
-                    offsetX + col * tileSize,
-                    offsetY + row * tileSize
-                );
+                sprite->setPosition(offsetX + drawCol * tileSize, offsetY + drawRow * tileSize);
+                sprite->setScale(
+                    (float)tileSize / sprite->getTexture()->getSize().x,
+                    (float)tileSize / sprite->getTexture()->getSize().y);
 
-                window.draw(piece);
+                window.draw(*sprite);
             }
         }
     }
-
-    // Vẽ UI chọn quân để phong
-    if (showingPromotion) {
-        sf::Vector2u windowSize = window.getSize();
-        int tileSize = std::min(windowSize.x, windowSize.y) / 8;
-        int size = tileSize * 4; // dùng 4 ô = 2x2
-
-        if (wPromotion == true) {
-
-            wPromotionSprite.setScale(static_cast<float>(size) / wPromotionTexture.getSize().x, static_cast<float>(size) / wPromotionTexture.getSize().y);
-
-            wPromotionSprite.setPosition((windowSize.x - size) / 2.f, (windowSize.y - size) / 2.f);
-
-            window.draw(wPromotionSprite);
-        }
-        else {
-            bPromotionSprite.setScale(static_cast<float>(size) / bPromotionTexture.getSize().x, static_cast<float>(size) / bPromotionTexture.getSize().y);
-
-            bPromotionSprite.setPosition((windowSize.x - size) / 2.f, (windowSize.y - size) / 2.f);
-
-            window.draw(bPromotionSprite);
-        }
-    }
 }
+
 
 void Board::setPiece(int row, int col, const string& name) {
     if (row < 0 || row >= 8 || col < 0 || col >= 8) return;  // Kiểm tra giới hạn bàn cờ

@@ -354,6 +354,7 @@ void Board::promotePiece(int row, int col, const string& newPieceName) {
 
 void Board::startGame() {
     playSound("game-start");  // Phát âm thanh bắt đầu game
+	m_currentTurn = Color::White; //Bắt đầu với quân trắng
 }
 
 void Board::setLogicPiece(int row, int col, std::unique_ptr<BasePiece> piece) {
@@ -508,3 +509,24 @@ sf::Sprite* Board::getPieceSpriteAt(Position pos) {
     if (pieceNames[pos.y][pos.x].empty()) return nullptr;
     return &pieces[pos.y][pos.x];
 } // bổ trợ cho xử lý kéo thả quân
+
+
+
+// Hàm này trả về lượt đi hiện tại
+Color Board::getCurrentTurn() const {
+    return m_currentTurn;
+}
+
+// Hàm này sẽ được gọi khi người dùng thực hiện một nước đi
+void Board::makeMove(const Move& move) {
+    // Lấy tọa độ từ đối tượng Move bằng cách truy cập trực tiếp
+    Position from = move.from; // Sử dụng move.from thay vì move.get_start_pos()
+    Position to = move.to;   // Sử dụng move.to   thay vì move.get_end_pos()
+
+    // Gọi hàm movePiece đã có sẵn của bạn để xử lý logic
+    // Tọa độ đang dùng là (row, col) nên cần tráo đổi x, y
+    movePiece(from.y, from.x, to.y, to.x);
+
+    //Chuyển lượt cho người chơi tiếp theo
+    m_currentTurn = (m_currentTurn == Color::White) ? Color::Black : Color::White;
+}

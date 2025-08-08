@@ -23,7 +23,9 @@ class Game {
 private:
     Board board;
     bool gameOver;
-    ChessBot bot;
+
+    ChessBot m_chessBot;
+	Color m_aiColor = Color::Black; // Màu của AI, mặc định là đen
 
     DragHandler* dragHandler;
 
@@ -46,6 +48,8 @@ public:
     void setGameMode(GameMode mode);
     GameMode getGameMode() const;
 
+	void makeAIMove();          // Kích hoạt AI để thực hiện nước đi
+	Color getAIColor() const;   // Lấy màu của AI (để kiểm tra lượt đi)
 };
 
 #endif

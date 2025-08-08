@@ -142,11 +142,6 @@ void Game::startNewGame() {
     board.setLogicPiece(0, 7, std::make_unique<Rook>(Color::Black, Position{ 7,0 }));
 }
 
-void Game::setDifficulty(const std::string& diff) {
-    difficulty = diff;
-    // Nếu cần, bạn có thể dùng giá trị này để cấu hình AI
-}
-
 std::string Game::getDifficulty() const {
     return difficulty;
 }
@@ -157,4 +152,45 @@ void Game::setGameMode(GameMode mode) {
 
 GameMode Game::getGameMode() const {
     return currentMode;
+}
+
+// Hàm này sẽ được gọi khi người dùng chọn độ khó từ menu
+void Game::setDifficulty(const std::string& difficulty) {
+    int searchDepth = 4; // Mặc định là Medium
+
+    if (difficulty == "Easy") {
+        searchDepth = 2; // AI tìm kiếm ít bước hơn
+    }
+    else if (difficulty == "Medium") {
+        searchDepth = 4; // Cân bằng
+    }
+    else if (difficulty == "Hard") {
+        searchDepth = 6; // AI tìm kiếm sâu hơn, thông minh hơn
+    }
+
+    // Gọi hàm setDifficulty có sẵn trong ChessBot (AIEngine.cpp)
+    // để cập nhật độ sâu tìm kiếm cho AI.
+    m_chessBot.setDifficulty(searchDepth);
+}
+
+// === PHẦN CẦN KÍCH HOẠT ===
+void Game::makeAIMove() {
+    // 1. Đảm bảo đến lượt AI và game chưa kết thúc
+    if (board.getCurrentTurn() != m_aiColor || isGameOver()) {
+        return;
+    }
+
+    // 2. Gọi AI để tìm nước đi tốt nhất
+    //    Hàm findBestMove sẽ sử dụng giá trị "depth" bạn đã set trong setDifficulty
+    std::cout << "AI is thinking..." << std::endl;
+    Move bestMove = m_chessBot.findBestMove(board, m_aiColor);
+
+    // 3. Thực hiện nước đi trên bàn cờ
+    board.makeMove(bestMove);
+    std::cout << "AI has moved." << std::endl;
+}
+
+// Hàm này trả về màu của AI để bạn có thể sử dụng trong logic game
+Color Game::getAIColor() const {
+    return m_aiColor; // Trả về màu của AI mà bạn đã định nghĩa trong Game.h
 }

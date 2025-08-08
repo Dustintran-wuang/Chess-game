@@ -3,7 +3,7 @@
 #include "Game.h"
 
 DragHandler::DragHandler(Board* gameBoard, Game* g)
-    : board(gameBoard), game(g), isDragging(false), hasSprite(false), currentTurn(Color::White) {
+    : board(gameBoard), game(g), isDragging(false), hasSprite(false) { 
     startSquare = { -1, -1 };
 }
 
@@ -18,7 +18,8 @@ void DragHandler::start_Drag(Position square, sf::Vector2f mousePos) {
 
     // Kiểm tra có phải lượt của quân cờ này không
     const BasePiece* piece = board->get_piece_at(square);
-    if (!piece || piece->get_color() != currentTurn) {
+
+    if (!piece || piece->get_color() != board->getCurrentTurn()) {
         return; // Không phải lượt của quân này
     }
 
@@ -61,47 +62,45 @@ void DragHandler::end_Drag(Position targetSquare) {
         return;
     }
 
-    bool validMove = false;
+    bool moveWasSuccessful = false;
 
-    if (board && startSquare.x != -1 && startSquare.y != -1) {
-        // Kiểm tra vị trí đích có hợp lệ không
-        if (board->is_inside_board(targetSquare)) {
-            // Kiểm tra nước đi có trong danh sách nước đi hợp lệ không
-            if (isValidMove(targetSquare)) {
-                // Lấy quân cờ để kiểm tra
-                const BasePiece* piece = board->get_piece_at(startSquare);
-                if (piece && piece->is_move_valid(*board, targetSquare)) {
-
-                    // Kiểm tra xem nước đi có khiến vua bị chiếu không
-                    if (!wouldExposeKing(startSquare, targetSquare)) {
-                        // Thực hiện di chuyển
-                        board->movePiece(startSquare.y, startSquare.x,
-                            targetSquare.y, targetSquare.x);
-
-                        validMove = true;
-
-                        // Đổi lượt
-                        switchTurn();
-
-                        // Nếu chơi PvP, xoay bàn cờ
-                        if (game && game->getGameMode() == GameMode::PlayerVsPlayer) {
-                            bool currentRotation = board->getRotation();
-                            board->setRotation(!currentRotation);
-                        }
-
-                        // Kiểm tra trạng thái game (chiếu, chiếu hết)
-                        checkGameState();
-                    }
-                }
-            }
+    // 1. Kiểm tra và thực hiện nước đi của người chơi
+    if (board && startSquare.x != -1 && isValidMove(targetSquare)) {
+        if (!wouldExposeKing(startSquare, targetSquare)) {
+            Move playerMove(startSquare, targetSquare);
+            board->makeMove(playerMove);
+            moveWasSuccessful = true;
         }
     }
 
-    // Reset trạng thái kéo
+    // 2. Reset trạng thái kéo thả
     isDragging = false;
     hasSprite = false;
     startSquare = { -1, -1 };
     validMoves.clear();
+
+    // 3. XỬ LÝ SAU KHI ĐI THÀNH CÔNG
+    if (moveWasSuccessful) {
+        // Lấy các trạng thái hiện tại để kiểm tra
+        GameMode currentMode = game->getGameMode();
+        Color boardTurn = board->getCurrentTurn();
+        Color aiColor = game->getAIColor();
+
+        if (currentMode == GameMode::PlayerVsPlayer) {
+            bool currentRotation = board->getRotation();
+            board->setRotation(!currentRotation);
+        }
+
+        else if (currentMode == GameMode::PlayerVsBot) {
+            if (boardTurn == aiColor) {
+                std::cout << "=> DIEU KIEN HOP LE: GOI AI DI QUAN!" << std::endl;
+                game->makeAIMove();
+            }
+            else {
+                std::cout << "=> LOI: Den luot Bot nhung mau quan khong khop." << std::endl;
+            }
+        }
+    }
 }
 
 bool DragHandler::is_Dragging_Piece() {
@@ -191,42 +190,29 @@ bool DragHandler::isValidMove(Position targetSquare) const {
 
 bool DragHandler::wouldExposeKing(Position from, Position to) const {
     if (!board) return true;
-
-    // Tạo bản sao board để test
     Board testBoard(*board);
+	auto capturedPiece = testBoard.move_piece_for_ai(from, to);     // Di chuyển quân cờ tạm thời
 
-    // Thực hiện nước đi thử
-    auto capturedPiece = testBoard.move_piece_for_ai(from, to);
+    bool kingInCheck = testBoard.is_check(board->getCurrentTurn()); // Lấy lượt đi từ board gốc
 
-    // Kiểm tra vua có bị chiếu không
-    bool kingInCheck = testBoard.is_check(currentTurn);
-
-    // Hoàn tác nước đi
     testBoard.undo_move_for_ai(from, to, std::move(capturedPiece));
-
     return kingInCheck;
-}
-
-void DragHandler::switchTurn() {
-    currentTurn = (currentTurn == Color::White) ? Color::Black : Color::White;
 }
 
 void DragHandler::checkGameState() {
     if (!board) return;
 
-    Color opponent = (currentTurn == Color::White) ? Color::Black : Color::White;
+    Color opponent = (board->getCurrentTurn() == Color::White) ? Color::Black : Color::White;
 
     if (board->is_check(opponent)) {
         if (board->isCheckmate(opponent)) {
-            // Chiếu hết - game over
+            // ... code chiếu hết ...
+            // THAY ĐỔI NHỎ Ở ĐÂY
             std::cout << "Checkmate! " <<
-                (currentTurn == Color::White ? "White" : "Black") << " wins!" << std::endl;
-            board->playSound("game-end");
+                (board->getCurrentTurn() == Color::White ? "White" : "Black") << " wins!" << std::endl;
         }
         else {
-            // Chỉ chiếu
-            std::cout << "Check!" << std::endl;
-            board->playSound("check");
+            // ... code chiếu ...
         }
     }
 }
@@ -258,12 +244,4 @@ void DragHandler::drawValidMoveHighlights(sf::RenderWindow& window) {
 
         window.draw(highlight);
     }
-}
-
-void DragHandler::setCurrentTurn(Color turn) {
-    currentTurn = turn;
-}
-
-Color DragHandler::getCurrentTurn() const {
-    return currentTurn;
 }

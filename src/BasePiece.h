@@ -27,6 +27,10 @@ struct Position {
 struct Move {
         Position from;
         Position to;
+
+        Move(Position start_pos = { -1, -1 }, Position end_pos = { -1, -1 })
+            : from(start_pos), to(end_pos) {
+        }
 };
 
 // Forward declaration

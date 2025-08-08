@@ -18,7 +18,6 @@ private:
     bool hasSprite;
     Position startSquare;
     sf::Sprite draggedPieceSprite;
-    Color currentTurn;
     std::vector<Position> validMoves;
 
     // Hàm hỗ trợ
@@ -27,12 +26,10 @@ private:
     void calculateValidMoves();
     bool isValidMove(Position targetSquare) const;
     bool wouldExposeKing(Position from, Position to) const;
-    void switchTurn();
     void checkGameState();
     void drawValidMoveHighlights(sf::RenderWindow& window);
 
 public:
-    DragHandler(Board* gameBoard);
     DragHandler(Board* gameBoard, Game* g);
     ~DragHandler();
 
@@ -49,6 +46,4 @@ public:
 
     // Getter-Setter
     Position getStartSquare() const;
-    void setCurrentTurn(Color turn);
-    Color getCurrentTurn() const;
 };

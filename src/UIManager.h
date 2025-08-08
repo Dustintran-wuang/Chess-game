@@ -69,4 +69,4 @@ private:
     void handleEvents();                                                // Xử lý sự kiện 
 };
 
-#endif // UIMANAGER_H
+#endif 

@@ -192,8 +192,6 @@ void UIManager::drawUI() {
     window.draw(statusText);
 }
 
-
-
 // ===== KIỂM TRA NÚT CÓ BỊ CLICK KHÔNG =====
 bool UIManager::isButtonClicked(const Button& button, const sf::Event& event) {
     return event.type == sf::Event::MouseButtonReleased &&
@@ -206,35 +204,45 @@ bool UIManager::isButtonClicked(const Button& button, const sf::Event& event) {
 void UIManager::handleEvents() {
     sf::Event event;
     while (window.pollEvent(event)) {
-        if (event.type == sf::Event::Closed)
-            window.close();             // Người dùng bấm nút X
+        if (event.type == sf::Event::Closed) {
+            window.close();
+        }
 
-        //New
+        // === PHẦN SỬA LỖI: Dùng IF / ELSE IF nối liền ===
+
+        // Xử lý khi ở Menu chính
         if (currentState == UIState::MainMenu) {
             if (isButtonClicked(pvpButton, event)) {
                 game.setGameMode(GameMode::PlayerVsPlayer);
                 game.startNewGame();
                 currentState = UIState::Playing;
-                statusText.setString("Mode: PvP");
             }
+            // Dùng "else if" ở đây
             else if (isButtonClicked(pvbButton, event)) {
-                game.setGameMode(GameMode::PlayerVsBot);
                 currentState = UIState::DifficultySelect;
-                statusText.setString("Select Difficulty");
             }
+            // Dùng "else if" ở đây
             else if (isButtonClicked(quitButton, event)) {
                 window.close();
             }
         }
 
-        // ======= CHỌN ĐỘ KHÓ =======
+// ======= CHỌN ĐỘ KHÓ =======
         else if (currentState == UIState::DifficultySelect) {
             for (int i = 0; i < difficultyButtons.size(); ++i) {
                 if (isButtonClicked(difficultyButtons[i], event)) {
                     string difficulty = difficultyButtons[i].text.getString();
+
+                    // === THAY ĐỔI THỨ TỰ LỆNH GỌI ===
+                    // 1. Thiết lập độ khó cho AI
                     game.setDifficulty(difficulty);
-                    game.setGameMode(GameMode::PlayerVsBot);
+
+                    // 2. Bắt đầu ván mới (hàm này có thể reset cả gameMode)
                     game.startNewGame();
+
+                    // 3. Đặt lại gameMode thành PlayerVsBot SAU KHI đã bắt đầu game mới
+                    game.setGameMode(GameMode::PlayerVsBot);
+
                     currentState = UIState::Playing;
                     statusText.setString("Difficulty: " + difficulty);
                     break;
@@ -242,9 +250,10 @@ void UIManager::handleEvents() {
             }
         }
 
-        // ======= ĐANG CHƠI GAME =======
+        // Xử lý khi đang chơi game
+        // Dùng "else if" để nối vào chuỗi logic
         else if (currentState == UIState::Playing) {
-            game.handleInput(event, window);  // Truyền sự kiện cho bàn cờ
+            game.handleInput(event, window);
         }
     }
 }

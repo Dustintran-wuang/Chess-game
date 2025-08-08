@@ -38,8 +38,10 @@ private:
     std::map<std::string, sf::SoundBuffer> soundBuffers;
     std::map<std::string, sf::Sound> sounds;
 
-    //New
     bool rotation = false;
+
+    // === PHẦN CẦN THÊM ===
+    Color m_currentTurn; // Biến để lưu trữ lượt đi (WHITE hoặc BLACK)
 public:
 
     Board();  // Khai báo con trỏ mặc định
@@ -115,6 +117,8 @@ public:
     void setRotation(bool r) { rotation = r; }
     bool getRotation() const { return rotation; }
 
+    void makeMove(const Move& move); // Hàm để thực hiện một nước đi
+    Color getCurrentTurn() const;    // Hàm để lấy lượt đi hiện tại
 };
 
 #endif

@@ -1,51 +1,69 @@
-﻿#include "King.h"
+#include "King.h"
 #include "ChessBoard.h"             
 #include <cmath>
 
 // --------- NƯỚC ĐI HỢP LỆ HAY KHÔNG ----------
 bool King::is_move_valid(const Board& board, Position dest) const {
     if (!board.is_inside_board(dest)) return false;
+    if (dest == pos) return false;
 
-    int dx = std::abs(dest.x - pos.x);
-    int dy = std::abs(dest.y - pos.y);
+    int dx = dest.x - pos.x;
+    int dy = dest.y - pos.y;
 
-    // Di chuyển 1 ô xung quanh
-    if ((dx <= 1 && dy <= 1) && !(dx == 0 && dy == 0)) {
+    // ----- Di chuyển bình thường -----
+    if (std::abs(dx) <= 1 && std::abs(dy) <= 1) {
         const BasePiece* target = board.get_piece_at(dest);
-        return (!target || target->get_color() != color);
-    }
-
-    // --- Castling ---
-    if (!castling || pos.y != dest.y) return false;
-
-    // Chỉ cho phép castling theo hàng, qua 2 ô
-    if (dy == 0 && dx == 2) {
-        int direction = (dest.x - pos.x > 0) ? 1 : -1;
-        Position rookPos = (direction == 1) ? Position{7, pos.y} : Position{0, pos.y};
-        const BasePiece* rook = board.get_piece_at(rookPos);
-
-        // Quân xe phải tồn tại, cùng màu và chưa di chuyển
-        if (!rook || rook->get_pieceType() != PieceType::Rook || rook->get_color() != color)
+        if (target && target->get_color() == color)
             return false;
 
-        // Cả vua và xe chưa di chuyển
-        if (!can_castling() || !board.can_castle_rook(rookPos))
+        // Không được đi vào ô bị chiếu
+        if (board.is_square_under_attacked(dest, color == Color::White ? Color::Black : Color::White))
             return false;
-
-        // Không bị chiếu và không đi qua ô bị chiếu
-        Position mid1{pos.x + direction, pos.y};
-        Position mid2{pos.x + 2 * direction, pos.y};
-
-        if (board.is_check(color)) return false;
-        if (board.is_square_under_attacked(mid1, color)) return false;
-        if (board.is_square_under_attacked(mid2, color)) return false;
-
-        // Kiểm tra không có quân cờ nào cản đường
-        if (board.get_piece_at(mid1) || board.get_piece_at(mid2)) return false;
 
         return true;
     }
 
+    // ----- Nhập thành -----
+    if (dy == 0 && std::abs(dx) == 2) {
+        // 1. Vua chưa di chuyển
+        if (!can_castling()) return false;
+
+        Color opponent = (color == Color::White) ? Color::Black : Color::White;
+
+        // 2. Không đang bị chiếu
+        if (board.is_square_under_attacked(pos, opponent))
+            return false;
+
+        // 3. Xác định hướng (kingSide = true nếu dx > 0)
+        bool kingSide = (dx > 0);
+        Position rookPos = kingSide
+            ? Position{ pos.x + 3, pos.y } // rook bên phải
+        : Position{ pos.x - 4, pos.y }; // rook bên trái
+
+        const BasePiece* rook = board.get_piece_at(rookPos);
+        if (!rook || rook->get_pieceType() != PieceType::Rook) return false;
+
+        const Rook* r = dynamic_cast<const Rook*>(rook);
+        if (!r || !r->can_castling()) return false;
+
+        // 4. Các ô giữa vua và rook phải trống
+        int step = kingSide ? 1 : -1;
+        Position checkPos = pos;
+        for (int i = 1; i < (kingSide ? 3 : 4); i++) {
+            checkPos.x += step;
+            if (board.get_piece_at(checkPos) != nullptr)
+                return false;
+        }
+
+        // 5. Các ô vua đi qua không bị chiếu
+        checkPos = pos;
+        for (int i = 1; i <= 2; i++) {
+            checkPos.x += step;
+            if (board.is_square_under_attacked(checkPos, opponent))
+                return false;
+        }
+        return true;
+    }
     return false;
 }
 
@@ -53,41 +71,29 @@ bool King::is_move_valid(const Board& board, Position dest) const {
 std::vector<Position> King::get_all_moves(const Board& board) const {
     std::vector<Position> moves;
 
-    // Di chuyển thông thường
+    // --- Di chuyển thông thường ---
     for (int dx = -1; dx <= 1; ++dx) {
         for (int dy = -1; dy <= 1; ++dy) {
             if (dx == 0 && dy == 0) continue;
 
             Position next{ pos.x + dx, pos.y + dy };
-            if (!board.is_inside_board(next)) continue;
 
-            const BasePiece* target = board.get_piece_at(next);
-            if (!target || target->get_color() != color) {
+            // THÊM KIỂM TRA is_move_valid VÀO ĐÂY
+            if (is_move_valid(board, next)) {
                 moves.push_back(next);
             }
         }
     }
 
-    // --- Castling ---
-    if (!castling || board.is_check(color)) return moves;
+    // --- Nhập thành ---
+    Position kingSideDest{ pos.x + 2, pos.y };
+    if (is_move_valid(board, kingSideDest)) {
+        moves.push_back(kingSideDest);
+    }
 
-    for (int dir : {-1, 1}) {
-        Position rookPos = (dir == 1) ? Position{7, pos.y} : Position{0, pos.y};
-        const BasePiece* rook = board.get_piece_at(rookPos);
-
-        if (!rook || rook->get_pieceType() != PieceType::Rook || rook->get_color() != color)
-            continue;
-
-        if (!board.can_castle_rook(rookPos))
-            continue;
-
-        Position mid1{pos.x + dir, pos.y};
-        Position mid2{pos.x + 2 * dir, pos.y};
-
-        if (board.get_piece_at(mid1) || board.get_piece_at(mid2)) continue;
-        if (board.is_square_under_attacked(mid1, color) || board.is_square_under_attacked(mid2, color)) continue;
-
-        moves.push_back(mid2);
+    Position queenSideDest{ pos.x - 2, pos.y };
+    if (is_move_valid(board, queenSideDest)) {
+        moves.push_back(queenSideDest);
     }
 
     return moves;

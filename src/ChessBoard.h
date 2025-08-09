@@ -105,7 +105,8 @@ public:
     const BasePiece* get_piece_at(Position p) const; // Lấy quân cờ tại vị trí đó
     bool is_inside_board(Position p) const; // Kiểm tra vị trí đích đến của quân cờ có nằm trong bàn cờ hay không
     bool is_check(Color color) const; // Kiểm tra vua có bị chiếu hay không
-    bool can_castle_rook(Position rookPos) const; // Vua kiểm tra xe đi hay chưa để nhập thành
+    bool can_castle_rook(Position rookPos) const; // xe
+    bool can_castle_king(Position kingPos) const; // vua
     bool is_square_under_attacked(Position pos, Color byColor) const; // Kiểm tra xem ô đó có an toàn để vua nhập thành không
     bool isCheckmate(Color color) const;
 

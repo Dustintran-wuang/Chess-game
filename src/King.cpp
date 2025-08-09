@@ -78,7 +78,6 @@ std::vector<Position> King::get_all_moves(const Board& board) const {
 
             Position next{ pos.x + dx, pos.y + dy };
 
-            // THÊM KIỂM TRA is_move_valid VÀO ĐÂY
             if (is_move_valid(board, next)) {
                 moves.push_back(next);
             }

@@ -63,6 +63,7 @@ void Game::handleInput(const sf::Event& event, sf::RenderWindow& window) {
         Position adjustedPos = getRotatedPosition(col, row);
         dragHandler -> start_Drag(adjustedPos, mousePos);
     }
+
     else if (event.type == sf::Event::MouseMoved) {
         sf::Vector2f mousePos(static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y));
         dragHandler -> update_Drag(mousePos);

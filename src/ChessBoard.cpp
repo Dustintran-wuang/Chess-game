@@ -1,4 +1,5 @@
 #include "Pawn.h"
+#include "King.h"
 #include "ChessBoard.h"
 #include <sstream>
 #include <iostream>
@@ -72,13 +73,13 @@ bool Board::loadAssets() {
     }
 
     // Load UI chọn quân để phong
-    if (!wPromotionTexture.loadFromFile("assets/Board and Pieces/wPromotion.png")) {
+    if (!wPromotionTexture.loadFromFile("assets/Board and pieces/wPromotion.png")) {
         cout << "Không thể tải ảnh chọn phong cấp!" << endl;
         return false;
     }
     wPromotionSprite.setTexture(wPromotionTexture);
 
-    if (!bPromotionTexture.loadFromFile("assets/Board and Pieces/bPromotion.png")) {
+    if (!bPromotionTexture.loadFromFile("assets/Board and pieces/bPromotion.png")) {
         cout << "Không thể tải ảnh chọn phong cấp!" << endl;
         return false;
     }
@@ -143,6 +144,29 @@ void Board::draw(sf::RenderWindow& window) {
             }
         }
     }
+
+    // Vẽ UI chọn quân để phong
+    if (showingPromotion) {
+        sf::Vector2u windowSize = window.getSize();
+        int tileSize = std::min(windowSize.x, windowSize.y) / 8;
+        int size = tileSize * 4; // dùng 4 ô = 2x2
+
+        if (wPromotion == true) {
+
+            wPromotionSprite.setScale(static_cast<float>(size) / wPromotionTexture.getSize().x, static_cast<float>(size) / wPromotionTexture.getSize().y);
+
+            wPromotionSprite.setPosition((windowSize.x - size) / 2.f, (windowSize.y - size) / 2.f);
+
+            window.draw(wPromotionSprite);
+        }
+        else {
+            bPromotionSprite.setScale(static_cast<float>(size) / bPromotionTexture.getSize().x, static_cast<float>(size) / bPromotionTexture.getSize().y);
+
+            bPromotionSprite.setPosition((windowSize.x - size) / 2.f, (windowSize.y - size) / 2.f);
+
+            window.draw(bPromotionSprite);
+        }
+    }
 }
 
 
@@ -205,38 +229,63 @@ void Board::handlePromotionClick(int mouseX, int mouseY, sf::RenderWindow& windo
 
 void Board::movePiece(int fromRow, int fromCol, int toRow, int toCol) {
     // Kiểm tra giới hạn bàn cờ
-    if (!is_inside_board({ fromCol, fromRow }) || !is_inside_board({ toCol, toRow })) return;
+    if (!is_inside_board({ fromCol, fromRow }) || !is_inside_board({ toCol, toRow }))
+        return;
 
-    // Lấy quân đang di chuyển
     BasePiece* movingPiece = board[fromRow][fromCol].get();
     if (!movingPiece) return;
 
-    // Kiểm tra hợp lệ nếu cần
-    Position to{ toCol, toRow };
     Position from{ fromCol, fromRow };
+    Position to{ toCol, toRow };
+
+    // Kiểm tra nước đi hợp lệ
     if (!movingPiece->is_move_valid(*this, to)) return;
+
+    // ================= Xử lý Castling =================
+    King* king = dynamic_cast<King*>(movingPiece);
+    bool castlingMove = false;
+    if (king && std::abs(toCol - fromCol) == 2 && fromRow == toRow) {
+        castlingMove = true;
+        bool kingSide = (toCol > fromCol);
+
+        int rookFromCol = kingSide ? 7 : 0;
+        int rookToCol = kingSide ? toCol - 1 : toCol + 1;
+
+        // Logic rook
+        board[toRow][rookToCol] = std::move(board[toRow][rookFromCol]);
+        board[toRow][rookToCol]->set_pos({ rookToCol, toRow });
+        board[toRow][rookFromCol] = nullptr;
+
+        // Hiển thị rook
+        pieceNames[toRow][rookToCol] = pieceNames[toRow][rookFromCol];
+        pieceNames[toRow][rookFromCol].clear();
+        pieces[toRow][rookToCol].setTexture(*pieces[toRow][rookFromCol].getTexture());
+        pieces[toRow][rookToCol].setPosition(rookToCol * 64, toRow * 64);
+        pieces[toRow][rookFromCol].setTexture(sf::Texture());
+
+        // Mất quyền nhập thành
+        Rook* rook = dynamic_cast<Rook*>(board[toRow][rookToCol].get());
+        if (rook) rook->set_castling(false);
+        king->set_castling(false);
+    }
+    // ===================================================
 
     Pawn* pawn = dynamic_cast<Pawn*>(movingPiece);
     if (pawn) {
-        // Tính y (khoảng cách)
-        int dy = to.y - from.y;
-        dy = abs(dy);
-
+        int dy = std::abs(to.y - from.y);
         pawn->set_just_moved_2step(dy == 2);
         pawn->set_first_move(false);
     }
 
-    // Xử lý ăn En Passant
+    // ================= Xử lý En Passant =================
     bool enPassant = false;
-    int capturedRow = -1;
-    int capturedCol = -1;
+    int capturedRow = -1, capturedCol = -1;
 
     if (pawn) {
         int dy = toRow - fromRow;
         int dx = toCol - fromCol;
-
         if (abs(dx) == 1 && dy == (pawn->get_color() == Color::White ? -1 : 1)) {
-            if (pieceNames[toRow][toCol].empty()) {
+            if (pieceNames[toRow][toCol].empty()) { // không ăn trực tiếp
                 int sidePawnRow = fromRow;
                 int sidePawnCol = toCol;
 
@@ -256,12 +305,10 @@ void Board::movePiece(int fromRow, int fromCol, int toRow, int toCol) {
         }
     }
 
-    // Xử lý âm thanh và ăn quân
     if (enPassant) {
         board[capturedRow][capturedCol] = nullptr;
-        pieceNames[capturedRow][capturedCol] = "";
+        pieceNames[capturedRow][capturedCol].clear();
         pieces[capturedRow][capturedCol].setTexture(sf::Texture());
-
         playSound("capture");
     }
     else if (!pieceNames[toRow][toCol].empty()) {
@@ -270,52 +317,52 @@ void Board::movePiece(int fromRow, int fromCol, int toRow, int toCol) {
     else {
         playSound("move");
     }
+    // =====================================================
 
-    // Di chuyển logic
-    board[toRow][toCol] = move(board[fromRow][fromCol]);
+    // Di chuyển quân
+    board[toRow][toCol] = std::move(board[fromRow][fromCol]);
     board[fromRow][fromCol] = nullptr;
     board[toRow][toCol]->set_pos(to);
 
-    // Di chuyển hiển thị
-    pieceNames[toRow][toCol] = pieceNames[fromRow][fromCol];
-    pieceNames[fromRow][fromCol] = "";
+    // Mất quyền nhập thành nếu là king hoặc rook
+    if (king) king->set_castling(false);
+    if (Rook* rookMoved = dynamic_cast<Rook*>(board[toRow][toCol].get()))
+        rookMoved->set_castling(false);
 
+    // Cập nhật hiển thị
+    pieceNames[toRow][toCol] = pieceNames[fromRow][fromCol];
+    pieceNames[fromRow][fromCol].clear();
     pieces[toRow][toCol].setTexture(*pieces[fromRow][fromCol].getTexture());
     pieces[toRow][toCol].setPosition(toCol * 64, toRow * 64);
     pieces[fromRow][fromCol].setTexture(sf::Texture());
 
-    // Phong tốt
+    // ================= Xử lý Promotion =================
     if (pawn) {
-    if ((pawn->get_color() == Color::White && toRow == 0) ||
-        (pawn->get_color() == Color::Black && toRow == 7)) {
-        showingPromotion = true;
-        if (pawn->get_color() == Color::White) {
-            wPromotion = true;
+        if ((pawn->get_color() == Color::White && toRow == 0) ||
+            (pawn->get_color() == Color::Black && toRow == 7)) {
+            showingPromotion = true;
+            wPromotion = (pawn->get_color() == Color::White);
+            promotionRow = toRow;
+            promotionCol = toCol;
+            promotionColor = pawn->get_color();
         }
-        else { wPromotion = false; }
-        promotionRow = toRow;
-        promotionCol = toCol;
-        promotionColor = pawn->get_color();
     }
-}
+    // ====================================================
 
-    // Reset just_moved_2step cho tất cả các pawn khác không phải quân vừa đi 2 bước
+    // Reset just_moved_2step cho các pawn khác
     for (int y = 0; y < 8; ++y) {
         for (int x = 0; x < 8; ++x) {
-            if (y == toRow && x == toCol) continue; // Bỏ qua quân vừa đi
-            Pawn* otherPawn = dynamic_cast<Pawn*>(board[y][x].get());
-            if (otherPawn) {
+            if (y == toRow && x == toCol) continue;
+            if (Pawn* otherPawn = dynamic_cast<Pawn*>(board[y][x].get()))
                 otherPawn->set_just_moved_2step(false);
-            }
         }
     }
 
-    // Kiểm tra nếu nước đi này khiến vua đối phương bị chiếu => phát âm thanh "check"
+    // Âm thanh chiếu
     Color currentColor = movingPiece->get_color();
     Color opponentColor = (currentColor == Color::White) ? Color::Black : Color::White;
-    if (is_check(opponentColor)) {
+    if (is_check(opponentColor))
         playSound("check");
-    }
 }
 
 void Board::promotePiece(int row, int col, const string& newPieceName) {
@@ -430,14 +477,35 @@ bool Board::can_castle_rook(Position rookPos) const {
     return rook && rook->can_castling();
 }
 
-// Kiểm tra ô pos có bị quân đối phương tấn công không
 bool Board::is_square_under_attacked(Position pos, Color byColor) const {
     for (int y = 0; y < 8; ++y) {
         for (int x = 0; x < 8; ++x) {
             const BasePiece* piece = board[y][x].get();
             if (piece && piece->get_color() == byColor) {
-                if (piece->is_move_valid(*this, pos)) {
-                    return true;
+
+                // ---- Xử lý riêng cho TỐT ----
+                if (piece->get_pieceType() == PieceType::Pawn) {
+                    Position pawnPos = piece->get_pos();
+                    int direction = (byColor == Color::White) ? -1 : 1;
+                    // Chỉ kiểm tra 2 ô chéo, đây là logic TẤN CÔNG
+                    if (pawnPos.y + direction == pos.y &&
+                        (pawnPos.x + 1 == pos.x || pawnPos.x - 1 == pos.x)) {
+                        return true;
+                    }
+                }
+                // ---- Xử lý riêng cho VUA (để tránh đệ quy) ----
+                else if (piece->get_pieceType() == PieceType::King) {
+                    Position kingPos = piece->get_pos();
+                    // Kiểm tra 8 ô xung quanh Vua
+                    if (std::abs(kingPos.x - pos.x) <= 1 && std::abs(kingPos.y - pos.y) <= 1) {
+                        return true;
+                    }
+                }
+                // ---- Dùng is_move_valid cho các quân còn lại (Xe, Mã, Tượng, Hậu) ----
+                else {
+                    if (piece->is_move_valid(*this, pos)) {
+                        return true;
+                    }
                 }
             }
         }

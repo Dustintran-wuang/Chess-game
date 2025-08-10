@@ -35,7 +35,8 @@ Board::Board(const Board& other) {
             // Quan trọng: Sao chép sâu (deep copy) trạng thái logic của quân cờ
             if (other.board[y][x]) {
                 this->board[y][x] = other.board[y][x]->clone();
-            } else {
+            }
+            else {
                 this->board[y][x] = nullptr;
             }
         }
@@ -84,7 +85,6 @@ bool Board::loadAssets() {
         return false;
     }
     bPromotionSprite.setTexture(bPromotionTexture);
-
 
     return true;  // Trả về true nếu tải tất cả assets thành công
 }
@@ -168,7 +168,6 @@ void Board::draw(sf::RenderWindow& window) {
         }
     }
 }
-
 
 void Board::setPiece(int row, int col, const string& name) {
     if (row < 0 || row >= 8 || col < 0 || col >= 8) return;  // Kiểm tra giới hạn bàn cờ
@@ -378,17 +377,21 @@ void Board::promotePiece(int row, int col, const string& newPieceName) {
     Color color = board[row][col]->get_color();
 
     // --- Phần logic ---
-    Position pos{col, row};
+    Position pos{ col, row };
 
     if (newPieceName == "wQueen" || newPieceName == "bQueen") {
         board[row][col] = std::make_unique<Queen>(color, pos);
-    } else if (newPieceName == "wRook" || newPieceName == "bRook") {
+    }
+    else if (newPieceName == "wRook" || newPieceName == "bRook") {
         board[row][col] = std::make_unique<Rook>(color, pos);
-    } else if (newPieceName == "wBishop" || newPieceName == "bBishop") {
+    }
+    else if (newPieceName == "wBishop" || newPieceName == "bBishop") {
         board[row][col] = std::make_unique<Bishop>(color, pos);
-    } else if (newPieceName == "wKnight" || newPieceName == "bKnight") {
+    }
+    else if (newPieceName == "wKnight" || newPieceName == "bKnight") {
         board[row][col] = std::make_unique<Knight>(color, pos);
-    } else {
+    }
+    else {
         return; // Không rõ tên quân được phong cấp => không làm gì
     }
 
@@ -401,7 +404,7 @@ void Board::promotePiece(int row, int col, const string& newPieceName) {
 
 void Board::startGame() {
     playSound("game-start");  // Phát âm thanh bắt đầu game
-	m_currentTurn = Color::White; //Bắt đầu với quân trắng
+    m_currentTurn = Color::White; //Bắt đầu với quân trắng
 }
 
 void Board::setLogicPiece(int row, int col, std::unique_ptr<BasePiece> piece) {
@@ -451,12 +454,12 @@ bool Board::is_inside_board(Position p) const {
 // Kiểm tra vua có bị chiếu không
 bool Board::is_check(Color color) const {
     // Tìm vị trí vua
-    Position kingPos{-1, -1};
+    Position kingPos{ -1, -1 };
     for (int y = 0; y < 8; ++y) {
         for (int x = 0; x < 8; ++x) {
             const BasePiece* piece = board[y][x].get();
             if (piece && piece->get_pieceType() == PieceType::King && piece->get_color() == color) {
-                kingPos = {x, y};
+                kingPos = { x, y };
                 break;
             }
         }
@@ -513,9 +516,42 @@ bool Board::is_square_under_attacked(Position pos, Color byColor) const {
     return false;
 }
 
+// HÀM CẢI TIẾN ĐỂ KIỂM TRA CHECKMATE CHÍNH XÁC
 bool Board::isCheckmate(Color color) const {
-    if (is_check(color)) {
-        return true; // Chỉ là giả lập
+    // Nếu không bị chiếu thì không thể là checkmate
+    if (!is_check(color)) {
+        return false;
+    }
+
+    // Kiểm tra xem có nước đi hợp lệ nào không
+    return !hasValidMovesForColor(color);
+}
+
+// HÀM MỚI: Kiểm tra xem màu này có nước đi hợp lệ nào không
+bool Board::hasValidMovesForColor(Color color) const {
+    for (int y = 0; y < 8; ++y) {
+        for (int x = 0; x < 8; ++x) {
+            const BasePiece* piece = board[y][x].get();
+            if (piece && piece->get_color() == color) {
+                // Lấy tất cả nước đi có thể của quân này
+                std::vector<Position> moves = piece->get_all_moves(*this);
+
+                // Kiểm tra từng nước đi xem có hợp lệ không
+                for (const Position& move : moves) {
+                    // Tạo bản sao board để test
+                    Board testBoard(*this);
+                    auto capturedPiece = testBoard.move_piece_for_ai({ x, y }, move);
+
+                    // Nếu sau nước đi này vua không bị chiếu, thì có nước đi hợp lệ
+                    if (!testBoard.is_check(color)) {
+                        return true;
+                    }
+
+                    // Hoàn tác nước đi test (không cần thiết vì testBoard sẽ bị hủy)
+                    testBoard.undo_move_for_ai({ x, y }, move, std::move(capturedPiece));
+                }
+            }
+        }
     }
     return false;
 }
@@ -526,7 +562,7 @@ std::string Board::toFen(Color nextTurn) const {
     for (int y = 0; y < 8; ++y) {
         int emptySquares = 0;
         for (int x = 0; x < 8; ++x) {
-            const BasePiece* piece = get_piece_at({x, y});
+            const BasePiece* piece = get_piece_at({ x, y });
             if (piece) {
                 if (emptySquares > 0) {
                     fen << emptySquares;
@@ -535,20 +571,22 @@ std::string Board::toFen(Color nextTurn) const {
                 char p_char;
                 // Lấy ký tự quân cờ
                 switch (piece->get_pieceType()) {
-                    case PieceType::Pawn:   p_char = 'p'; break;
-                    case PieceType::Rook:   p_char = 'r'; break;
-                    case PieceType::Knight: p_char = 'n'; break;
-                    case PieceType::Bishop: p_char = 'b'; break;
-                    case PieceType::Queen:  p_char = 'q'; break;
-                    case PieceType::King:   p_char = 'k'; break;
+                case PieceType::Pawn:   p_char = 'p'; break;
+                case PieceType::Rook:   p_char = 'r'; break;
+                case PieceType::Knight: p_char = 'n'; break;
+                case PieceType::Bishop: p_char = 'b'; break;
+                case PieceType::Queen:  p_char = 'q'; break;
+                case PieceType::King:   p_char = 'k'; break;
                 }
                 // Chuyển thành chữ hoa cho quân trắng
                 if (piece->get_color() == Color::White) {
                     fen << (char)toupper(p_char);
-                } else {
+                }
+                else {
                     fen << p_char;
                 }
-            } else {
+            }
+            else {
                 emptySquares++;
             }
         }
@@ -577,8 +615,6 @@ sf::Sprite* Board::getPieceSpriteAt(Position pos) {
     if (pieceNames[pos.y][pos.x].empty()) return nullptr;
     return &pieces[pos.y][pos.x];
 } // bổ trợ cho xử lý kéo thả quân
-
-
 
 // Hàm này trả về lượt đi hiện tại
 Color Board::getCurrentTurn() const {

@@ -1,21 +1,19 @@
 #include "Game.h"
+#include <iostream>
 
-Game::Game() : board(), gameOver(false) {
+Game::Game() : board(), gameOver(false), gameState(GameState::Playing) {
     board.loadAssets();
     dragHandler = new DragHandler(&board, this);
+    gameResult = "";
 }
 
 Game::~Game() {
     delete dragHandler;
 }
 
-
-
 void Game::update() {
-    // Logic kiểm tra thắng thua ở đây
-    // Ví dụ đơn giản:
-    if (/* ví dụ */ false) {
-        gameOver = true;
+    if (!gameOver) {
+        checkGameEndConditions();
     }
 }
 
@@ -32,6 +30,8 @@ bool Game::isGameOver() const {
 }
 
 void Game::handleInput(const sf::Event& event, sf::RenderWindow& window) {
+    if (gameOver) return; // Không xử lý input nếu game đã kết thúc
+
     sf::Vector2u winSize = window.getSize();
     int tileSize = std::min(winSize.x, winSize.y) / 8;
     int boardSize = tileSize * 8;
@@ -61,12 +61,11 @@ void Game::handleInput(const sf::Event& event, sf::RenderWindow& window) {
         int row = (mousePos.y - offsetY) / tileSize;
 
         Position adjustedPos = getRotatedPosition(col, row);
-        dragHandler -> start_Drag(adjustedPos, mousePos);
+        dragHandler->start_Drag(adjustedPos, mousePos);
     }
-
     else if (event.type == sf::Event::MouseMoved) {
         sf::Vector2f mousePos(static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y));
-        dragHandler -> update_Drag(mousePos);
+        dragHandler->update_Drag(mousePos);
     }
     else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
         sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
@@ -74,13 +73,15 @@ void Game::handleInput(const sf::Event& event, sf::RenderWindow& window) {
         int row = (mousePos.y - offsetY) / tileSize;
 
         Position adjustedPos = getRotatedPosition(col, row);
-        dragHandler -> end_Drag(adjustedPos);
+        dragHandler->end_Drag(adjustedPos);
     }
 }
 
 void Game::startNewGame() {
     board.startGame();     // Phát âm thanh bắt đầu
     gameOver = false;
+    gameState = GameState::Playing;
+    gameResult = "";
 
     // Quân trắng
     for (int i = 0; i < 8; ++i) {
@@ -155,8 +156,8 @@ GameMode Game::getGameMode() const {
     return currentMode;
 }
 
-// Hàm này sẽ được gọi khi người dùng chọn độ khó từ menu
 void Game::setDifficulty(const std::string& difficulty) {
+    this->difficulty = difficulty;
     int searchDepth = 4; // Mặc định là Medium
 
     if (difficulty == "Easy") {
@@ -194,4 +195,167 @@ void Game::makeAIMove() {
 // Hàm này trả về màu của AI để bạn có thể sử dụng trong logic game
 Color Game::getAIColor() const {
     return m_aiColor; // Trả về màu của AI mà bạn đã định nghĩa trong Game.h
+}
+
+// === CÁC HÀM MỚI ĐỂ XỬ LÝ KẾT THÚC GAME ===
+
+void Game::checkGameEndConditions() {
+    Color currentPlayer = board.getCurrentTurn();
+
+    // Kiểm tra chiếu hết (checkmate)
+    if (board.is_check(currentPlayer)) {
+        if (!hasValidMoves(currentPlayer)) {
+            // Checkmate - người chơi hiện tại thua
+            gameOver = true;
+            if (currentPlayer == Color::White) {
+                gameState = GameState::BlackWins;
+                gameResult = "Black Wins!";
+            }
+            else {
+                gameState = GameState::WhiteWins;
+                gameResult = "White Wins!";
+            }
+            board.playSound("game-end");
+            std::cout << gameResult << " (Checkmate)" << std::endl;
+            return;
+        }
+    }
+
+    // Kiểm tra chiếu bí (stalemate)
+    if (!board.is_check(currentPlayer) && !hasValidMoves(currentPlayer)) {
+        gameOver = true;
+        gameState = GameState::Draw;
+        gameResult = "Draw - Stalemate!";
+        board.playSound("game-end");
+        std::cout << gameResult << std::endl;
+        return;
+    }
+
+    // Kiểm tra không đủ quân để chiếu hết
+    if (isInsufficientMaterial()) {
+        gameOver = true;
+        gameState = GameState::Draw;
+        gameResult = "Draw - Insufficient Material!";
+        board.playSound("game-end");
+        std::cout << gameResult << std::endl;
+        return;
+    }
+}
+
+bool Game::hasValidMoves(Color color) const {
+    // Duyệt qua tất cả quân cờ của màu đó
+    for (int y = 0; y < 8; ++y) {
+        for (int x = 0; x < 8; ++x) {
+            const BasePiece* piece = board.get_piece_at({ x, y });
+            if (piece && piece->get_color() == color) {
+                // Lấy tất cả nước đi có thể của quân này
+                std::vector<Position> moves = piece->get_all_moves(board);
+
+                // Kiểm tra xem có nước đi nào không khiến vua bị chiếu
+                for (const Position& move : moves) {
+                    // Tạo bản sao board để test
+                    Board testBoard(board);
+                    auto capturedPiece = testBoard.move_piece_for_ai({ x, y }, move);
+
+                    // Nếu sau nước đi này vua không bị chiếu, thì có nước đi hợp lệ
+                    if (!testBoard.is_check(color)) {
+                        return true;
+                    }
+
+                    // Hoàn tác nước đi test
+                    testBoard.undo_move_for_ai({ x, y }, move, std::move(capturedPiece));
+                }
+            }
+        }
+    }
+    return false;
+}
+
+bool Game::isInsufficientMaterial() const {
+    std::vector<const BasePiece*> whitePieces;
+    std::vector<const BasePiece*> blackPieces;
+
+    // Thu thập tất cả quân cờ còn lại
+    for (int y = 0; y < 8; ++y) {
+        for (int x = 0; x < 8; ++x) {
+            const BasePiece* piece = board.get_piece_at({ x, y });
+            if (piece) {
+                if (piece->get_color() == Color::White) {
+                    whitePieces.push_back(piece);
+                }
+                else {
+                    blackPieces.push_back(piece);
+                }
+            }
+        }
+    }
+
+    // Kiểm tra các trường hợp không đủ quân
+
+    // Chỉ có 2 vua
+    if (whitePieces.size() == 1 && blackPieces.size() == 1) {
+        return true;
+    }
+
+    // Một bên chỉ có vua, bên kia có vua + tượng hoặc vua + mã
+    if (whitePieces.size() == 1 && blackPieces.size() == 2) {
+        for (const BasePiece* piece : blackPieces) {
+            if (piece->get_pieceType() == PieceType::Bishop ||
+                piece->get_pieceType() == PieceType::Knight) {
+                return true;
+            }
+        }
+    }
+
+    if (blackPieces.size() == 1 && whitePieces.size() == 2) {
+        for (const BasePiece* piece : whitePieces) {
+            if (piece->get_pieceType() == PieceType::Bishop ||
+                piece->get_pieceType() == PieceType::Knight) {
+                return true;
+            }
+        }
+    }
+
+    // Cả hai bên chỉ có vua + tượng cùng màu ô
+    if (whitePieces.size() == 2 && blackPieces.size() == 2) {
+        const BasePiece* whiteBishop = nullptr;
+        const BasePiece* blackBishop = nullptr;
+
+        for (const BasePiece* piece : whitePieces) {
+            if (piece->get_pieceType() == PieceType::Bishop) {
+                whiteBishop = piece;
+                break;
+            }
+        }
+
+        for (const BasePiece* piece : blackPieces) {
+            if (piece->get_pieceType() == PieceType::Bishop) {
+                blackBishop = piece;
+                break;
+            }
+        }
+
+        if (whiteBishop && blackBishop) {
+            Position whitePos = whiteBishop->get_pos();
+            Position blackPos = blackBishop->get_pos();
+
+            // Kiểm tra xem hai tượng có cùng màu ô không
+            bool whiteBishopOnLightSquare = (whitePos.x + whitePos.y) % 2 == 0;
+            bool blackBishopOnLightSquare = (blackPos.x + blackPos.y) % 2 == 0;
+
+            if (whiteBishopOnLightSquare == blackBishopOnLightSquare) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+std::string Game::getGameResult() const {
+    return gameResult;
+}
+
+GameState Game::getGameState() const {
+    return gameState;
 }

@@ -42,6 +42,7 @@ private:
 
     // === PHẦN CẦN THÊM ===
     Color m_currentTurn; // Biến để lưu trữ lượt đi (WHITE hoặc BLACK)
+
 public:
 
     Board();  // Khai báo con trỏ mặc định
@@ -108,7 +109,7 @@ public:
     bool can_castle_rook(Position rookPos) const; // xe
     bool can_castle_king(Position kingPos) const; // vua
     bool is_square_under_attacked(Position pos, Color byColor) const; // Kiểm tra xem ô đó có an toàn để vua nhập thành không
-    bool isCheckmate(Color color) const;
+    bool isCheckmate(Color color) const; // Cải tiến hàm này
 
     std::string toFen(Color nextTurn) const;
 
@@ -120,6 +121,9 @@ public:
 
     void makeMove(const Move& move); // Hàm để thực hiện một nước đi
     Color getCurrentTurn() const;    // Hàm để lấy lượt đi hiện tại
+
+    // === HÀM MỚI ĐỂ KIỂM TRA CÁC ĐIỀU KIỆN KẾT THÚC ===
+    bool hasValidMovesForColor(Color color) const; // Kiểm tra xem màu này có nước đi hợp lệ nào không
 };
 
 #endif

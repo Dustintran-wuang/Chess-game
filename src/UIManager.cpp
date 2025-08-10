@@ -19,16 +19,23 @@ UIManager::UIManager()
 
     // Thiết lập các thành phần giao diện
     initUI();
+    initGameOverUI();
 }
 
 // ===== VÒNG LẶP CHÍNH CỦA GIAO DIỆN =====
 void UIManager::run() {
     while (window.isOpen()) {
+        // Kiểm tra trạng thái game để chuyển sang màn hình game over
+        if (currentState == UIState::Playing && game.isGameOver()) {
+            gameResult = game.getGameResult();
+            showGameOver(gameResult);
+        }
+
         handleEvents();
 
         window.clear();
 
-        if (currentState == UIState::MainMenu || currentState == UIState::DifficultySelect) {
+        if (currentState == UIState::MainMenu || currentState == UIState::DifficultySelect || currentState == UIState::GameOver) {
             updateButtonStates();
             drawUI();
         }
@@ -40,7 +47,6 @@ void UIManager::run() {
         window.display();
     }
 }
-
 
 // ===== TẢI FONT VÀ HÌNH NỀN =====
 bool UIManager::loadAssets() {
@@ -103,7 +109,7 @@ void UIManager::initUI() {
     quitButton.shape.setPosition(300, 340);
     quitButton.text.setPosition(370, 350);
 
-	// Nút chọn độ khó (3 nút)
+    // Nút chọn độ khó (3 nút)
     vector<string> labels = { "Easy", "Medium", "Hard" };
 
     for (int i = 0; i < 3; ++i) {
@@ -124,12 +130,53 @@ void UIManager::initUI() {
         difficultyButtons.push_back(btn);
     }
 
-
     // Text trạng thái (ví dụ: "Game Over!")
     statusText.setFont(font);
     statusText.setCharacterSize(24);
     statusText.setFillColor(sf::Color::White);
     statusText.setPosition(50, 500);
+}
+
+// ===== KHỞI TẠO GIAO DIỆN GAME OVER =====
+void UIManager::initGameOverUI() {
+    // Text hiển thị kết quả
+    gameOverText.setFont(font);
+    gameOverText.setCharacterSize(48);
+    gameOverText.setFillColor(sf::Color::Yellow);
+    gameOverText.setPosition(200, 150);
+
+    // Nút Play Again
+    playAgainButton.shape.setSize({ 200, 50 });
+    playAgainButton.shape.setPosition(200, 300);
+    playAgainButton.shape.setFillColor(normalColor);
+    playAgainButton.text.setString("Play Again");
+    playAgainButton.text.setFont(font);
+    playAgainButton.text.setCharacterSize(24);
+    playAgainButton.text.setFillColor(sf::Color::White);
+    playAgainButton.text.setPosition(230, 310);
+
+    // Nút Main Menu
+    mainMenuButton.shape.setSize({ 200, 50 });
+    mainMenuButton.shape.setPosition(450, 300);
+    mainMenuButton.shape.setFillColor(normalColor);
+    mainMenuButton.text.setString("Main Menu");
+    mainMenuButton.text.setFont(font);
+    mainMenuButton.text.setCharacterSize(24);
+    mainMenuButton.text.setFillColor(sf::Color::White);
+    mainMenuButton.text.setPosition(485, 310);
+}
+
+// ===== HIỂN THỊ MÀN HÌNH GAME OVER =====
+void UIManager::showGameOver(const std::string& result) {
+    gameResult = result;
+    gameOverText.setString(result);
+    
+    // Căn giữa text dựa trên độ dài
+    sf::FloatRect textRect = gameOverText.getLocalBounds();
+    gameOverText.setOrigin(textRect.left + textRect.width/2.0f, textRect.top + textRect.height/2.0f);
+    gameOverText.setPosition(400, 200);
+    
+    currentState = UIState::GameOver;
 }
 
 // ===== CẬP NHẬT MÀU CỦA NÚT =====
@@ -165,8 +212,18 @@ void UIManager::updateButtonStates() {
                 btn.shape.setFillColor(normalColor);
         }
     }
-}
+    else if (currentState == UIState::GameOver) {
+        if (playAgainButton.shape.getGlobalBounds().contains(mousePos))
+            playAgainButton.shape.setFillColor(sf::Mouse::isButtonPressed(sf::Mouse::Left) ? pressedColor : hoverColor);
+        else
+            playAgainButton.shape.setFillColor(normalColor);
 
+        if (mainMenuButton.shape.getGlobalBounds().contains(mousePos))
+            mainMenuButton.shape.setFillColor(sf::Mouse::isButtonPressed(sf::Mouse::Left) ? pressedColor : hoverColor);
+        else
+            mainMenuButton.shape.setFillColor(normalColor);
+    }
+}
 
 // ===== VẼ TOÀN BỘ GIAO DIỆN MENU =====
 void UIManager::drawUI() {
@@ -181,12 +238,18 @@ void UIManager::drawUI() {
         window.draw(quitButton.shape);
         window.draw(quitButton.text);
     }
-
     else if (currentState == UIState::DifficultySelect) {
         for (const auto& btn : difficultyButtons) {
             window.draw(btn.shape);
             window.draw(btn.text);
         }
+    }
+    else if (currentState == UIState::GameOver) {
+        window.draw(gameOverText);
+        window.draw(playAgainButton.shape);
+        window.draw(playAgainButton.text);
+        window.draw(mainMenuButton.shape);
+        window.draw(mainMenuButton.text);
     }
 
     window.draw(statusText);
@@ -208,8 +271,6 @@ void UIManager::handleEvents() {
             window.close();
         }
 
-        // === PHẦN SỬA LỖI: Dùng IF / ELSE IF nối liền ===
-
         // Xử lý khi ở Menu chính
         if (currentState == UIState::MainMenu) {
             if (isButtonClicked(pvpButton, event)) {
@@ -217,30 +278,21 @@ void UIManager::handleEvents() {
                 game.startNewGame();
                 currentState = UIState::Playing;
             }
-            // Dùng "else if" ở đây
             else if (isButtonClicked(pvbButton, event)) {
                 currentState = UIState::DifficultySelect;
             }
-            // Dùng "else if" ở đây
             else if (isButtonClicked(quitButton, event)) {
                 window.close();
             }
         }
-
-// ======= CHỌN ĐỘ KHÓ =======
+        // Chọn độ khó
         else if (currentState == UIState::DifficultySelect) {
             for (int i = 0; i < difficultyButtons.size(); ++i) {
                 if (isButtonClicked(difficultyButtons[i], event)) {
                     string difficulty = difficultyButtons[i].text.getString();
 
-                    // === THAY ĐỔI THỨ TỰ LỆNH GỌI ===
-                    // 1. Thiết lập độ khó cho AI
                     game.setDifficulty(difficulty);
-
-                    // 2. Bắt đầu ván mới (hàm này có thể reset cả gameMode)
                     game.startNewGame();
-
-                    // 3. Đặt lại gameMode thành PlayerVsBot SAU KHI đã bắt đầu game mới
                     game.setGameMode(GameMode::PlayerVsBot);
 
                     currentState = UIState::Playing;
@@ -249,11 +301,21 @@ void UIManager::handleEvents() {
                 }
             }
         }
-
         // Xử lý khi đang chơi game
-        // Dùng "else if" để nối vào chuỗi logic
         else if (currentState == UIState::Playing) {
             game.handleInput(event, window);
+        }
+        // Xử lý màn hình game over
+        else if (currentState == UIState::GameOver) {
+            if (isButtonClicked(playAgainButton, event)) {
+                // Chơi lại với cùng cài đặt
+                game.startNewGame();
+                currentState = UIState::Playing;
+            }
+            else if (isButtonClicked(mainMenuButton, event)) {
+                // Về menu chính
+                currentState = UIState::MainMenu;
+            }
         }
     }
 }

@@ -3,7 +3,7 @@
 #include "Game.h"
 
 DragHandler::DragHandler(Board* gameBoard, Game* g)
-    : board(gameBoard), game(g), isDragging(false), hasSprite(false) { 
+    : board(gameBoard), game(g), isDragging(false), hasSprite(false) {
     startSquare = { -1, -1 };
 }
 
@@ -81,23 +81,28 @@ void DragHandler::end_Drag(Position targetSquare) {
 
     // 3. XỬ LÝ SAU KHI ĐI THÀNH CÔNG
     if (moveWasSuccessful) {
+        // Kiểm tra trạng thái game sau nước đi
+        checkGameState();
+
         // Lấy các trạng thái hiện tại để kiểm tra
         GameMode currentMode = game->getGameMode();
         Color boardTurn = board->getCurrentTurn();
         Color aiColor = game->getAIColor();
 
-        if (currentMode == GameMode::PlayerVsPlayer) {
-            bool currentRotation = board->getRotation();
-            board->setRotation(!currentRotation);
-        }
-
-        else if (currentMode == GameMode::PlayerVsBot) {
-            if (boardTurn == aiColor) {
-                std::cout << "=> DIEU KIEN HOP LE: GOI AI DI QUAN!" << std::endl;
-                game->makeAIMove();
+        // Chỉ tiếp tục xử lý nếu game chưa kết thúc
+        if (!game->isGameOver()) {
+            if (currentMode == GameMode::PlayerVsPlayer) {
+                bool currentRotation = board->getRotation();
+                board->setRotation(!currentRotation);
             }
-            else {
-                std::cout << "=> LOI: Den luot Bot nhung mau quan khong khop." << std::endl;
+            else if (currentMode == GameMode::PlayerVsBot) {
+                if (boardTurn == aiColor) {
+                    std::cout << "=> DIEU KIEN HOP LE: GOI AI DI QUAN!" << std::endl;
+                    game->makeAIMove();
+                }
+                else {
+                    std::cout << "=> LOI: Den luot Bot nhung mau quan khong khop." << std::endl;
+                }
             }
         }
     }
@@ -191,7 +196,7 @@ bool DragHandler::isValidMove(Position targetSquare) const {
 bool DragHandler::wouldExposeKing(Position from, Position to) const {
     if (!board) return true;
     Board testBoard(*board);
-	auto capturedPiece = testBoard.move_piece_for_ai(from, to);     // Di chuyển quân cờ tạm thời
+    auto capturedPiece = testBoard.move_piece_for_ai(from, to);     // Di chuyển quân cờ tạm thời
 
     bool kingInCheck = testBoard.is_check(board->getCurrentTurn()); // Lấy lượt đi từ board gốc
 
@@ -200,19 +205,21 @@ bool DragHandler::wouldExposeKing(Position from, Position to) const {
 }
 
 void DragHandler::checkGameState() {
-    if (!board) return;
+    if (!board || !game) return;
 
-    Color opponent = (board->getCurrentTurn() == Color::White) ? Color::Black : Color::White;
+    Color currentPlayer = board->getCurrentTurn();
+    Color opponent = (currentPlayer == Color::White) ? Color::Black : Color::White;
 
+    // Kiểm tra xem đối phương có bị chiếu không
     if (board->is_check(opponent)) {
+        // Kiểm tra xem đối phương có thể thoát khỏi tình trạng chiếu không
         if (board->isCheckmate(opponent)) {
-            // ... code chiếu hết ...
-            // THAY ĐỔI NHỎ Ở ĐÂY
             std::cout << "Checkmate! " <<
-                (board->getCurrentTurn() == Color::White ? "White" : "Black") << " wins!" << std::endl;
+                (currentPlayer == Color::White ? "White" : "Black") << " wins!" << std::endl;
+            // Game sẽ tự động kết thúc trong Game::checkGameEndConditions()
         }
         else {
-            // ... code chiếu ...
+            std::cout << "Check!" << std::endl;
         }
     }
 }

@@ -12,9 +12,10 @@ private:
 
     // ===== TRẠNG THÁI UI =====
     enum class UIState {
-        MainMenu,   // Trạng thái ở menu chính
-		DifficultySelect, //Chọn độ khó
-        Playing     // Trạng thái đang chơi
+        MainMenu,           // Trạng thái ở menu chính
+        DifficultySelect,   // Chọn độ khó
+        Playing,            // Trạng thái đang chơi
+        GameOver            // Trạng thái kết thúc game
     };
 
     UIState currentState;       // Trạng thái hiện tại của giao diện
@@ -36,16 +37,24 @@ private:
 
     Button startButton;     // Nút bắt đầu game
     Button quitButton;      // Nút thoát game
-    std::vector<Button> difficultyButtons; // 8 nút chọn độ khó
+    std::vector<Button> difficultyButtons; // Nút chọn độ khó
+
+    // ===== NÚT GAME OVER =====
+    Button playAgainButton;     // Nút chơi lại
+    Button mainMenuButton;      // Nút về menu chính
 
     // ===== VĂN BẢN HIỂN THỊ =====
     sf::Text statusText;    // Hiển thị thông báo trạng thái (VD: Game Over)
     sf::Text titleText;     // Hiển thị tiêu đề game (VD: CHESS GAME)
+    sf::Text gameOverText;  // Hiển thị kết quả trận đấu
 
     // ===== MÀU SẮC NÚT =====
     sf::Color normalColor;  // Màu bình thường
     sf::Color hoverColor;   // Màu khi di chuột qua
     sf::Color pressedColor; // Màu khi nhấn chuột
+
+    // ===== BIẾN TRẠNG THÁI GAME =====
+    std::string gameResult; // Lưu kết quả game ("White Wins", "Black Wins", "Draw")
 
 public:
     // ===== HÀM KHỞI TẠO =====
@@ -53,6 +62,9 @@ public:
 
     // ===== VÒNG LẶP CHÍNH =====
     void run();             // Hàm chạy chính của giao diện
+
+    // ===== HÀM XỬ LÝ KẾT THÚC GAME =====
+    void showGameOver(const std::string& result);
 
 private:
 
@@ -67,6 +79,8 @@ private:
     bool isButtonClicked(const Button& button, const sf::Event& event); // Kiểm tra nút có bị nhấn
 
     void handleEvents();                                                // Xử lý sự kiện 
+
+    void initGameOverUI();  // Khởi tạo giao diện game over
 };
 
-#endif 
+#endif

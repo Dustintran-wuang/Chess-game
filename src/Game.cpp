@@ -78,70 +78,63 @@ void Game::handleInput(const sf::Event& event, sf::RenderWindow& window) {
 }
 
 void Game::startNewGame() {
-    board.startGame();     // Phát âm thanh bắt đầu
-    gameOver = false;
-    gameState = GameState::Playing;
-    gameResult = "";
-
-    // Quân trắng
-    for (int i = 0; i < 8; ++i) {
-        board.setPiece(6, i, "wPawn");
-        board.setLogicPiece(6, i, std::make_unique<Pawn>(Color::White, Position{ i,6 }));
+    // Xóa hết quân cờ cũ (logic)
+    for (int y = 0; y < 8; ++y) {
+        for (int x = 0; x < 8; ++x) {
+            board.setLogicPiece(y, x, nullptr);
+        }
     }
 
-    board.setPiece(7, 0, "wRook");
-    board.setLogicPiece(7, 0, std::make_unique<Rook>(Color::White, Position{ 0,7 }));
-
-    board.setPiece(7, 1, "wKnight");
-    board.setLogicPiece(7, 1, std::make_unique<Knight>(Color::White, Position{ 1,7 }));
-
-    board.setPiece(7, 2, "wBishop");
-    board.setLogicPiece(7, 2, std::make_unique<Bishop>(Color::White, Position{ 2,7 }));
-
-    board.setPiece(7, 3, "wQueen");
-    board.setLogicPiece(7, 3, std::make_unique<Queen>(Color::White, Position{ 3,7 }));
-
-    board.setPiece(7, 4, "wKing");
-    board.setLogicPiece(7, 4, std::make_unique<King>(Color::White, Position{ 4,7 }));
-
-    board.setPiece(7, 5, "wBishop");
-    board.setLogicPiece(7, 5, std::make_unique<Bishop>(Color::White, Position{ 5,7 }));
-
-    board.setPiece(7, 6, "wKnight");
-    board.setLogicPiece(7, 6, std::make_unique<Knight>(Color::White, Position{ 6,7 }));
-
-    board.setPiece(7, 7, "wRook");
-    board.setLogicPiece(7, 7, std::make_unique<Rook>(Color::White, Position{ 7,7 }));
+    // Xóa hết sprite cũ (hiển thị)
+    for (int y = 0; y < 8; ++y) {
+        for (int x = 0; x < 8; ++x) {
+            board.setPiece(y, x, ""); // Xóa tên quân cờ
+        }
+    }
 
     // Quân đen
-    for (int i = 0; i < 8; ++i) {
-        board.setPiece(1, i, "bPawn");
-        board.setLogicPiece(1, i, std::make_unique<Pawn>(Color::Black, Position{ i,1 }));
+    board.setPiece(0, 0, "bRook");   board.setLogicPiece(0, 0, std::make_unique<Rook>(Color::Black, Position{ 0, 0 }));
+    board.setPiece(0, 1, "bKnight"); board.setLogicPiece(0, 1, std::make_unique<Knight>(Color::Black, Position{ 1, 0 }));
+    board.setPiece(0, 2, "bBishop"); board.setLogicPiece(0, 2, std::make_unique<Bishop>(Color::Black, Position{ 2, 0 }));
+    board.setPiece(0, 3, "bQueen");  board.setLogicPiece(0, 3, std::make_unique<Queen>(Color::Black, Position{ 3, 0 }));
+    board.setPiece(0, 4, "bKing");   board.setLogicPiece(0, 4, std::make_unique<King>(Color::Black, Position{ 4, 0 }));
+    board.setPiece(0, 5, "bBishop"); board.setLogicPiece(0, 5, std::make_unique<Bishop>(Color::Black, Position{ 5, 0 }));
+    board.setPiece(0, 6, "bKnight"); board.setLogicPiece(0, 6, std::make_unique<Knight>(Color::Black, Position{ 6, 0 }));
+    board.setPiece(0, 7, "bRook");   board.setLogicPiece(0, 7, std::make_unique<Rook>(Color::Black, Position{ 7, 0 }));
+
+    // Tốt đen
+    for (int x = 0; x < 8; ++x) {
+        board.setPiece(1, x, "bPawn");
+        board.setLogicPiece(1, x, std::make_unique<Pawn>(Color::Black, Position{ x, 1 }));
     }
 
-    board.setPiece(0, 0, "bRook");
-    board.setLogicPiece(0, 0, std::make_unique<Rook>(Color::Black, Position{ 0,0 }));
+    // Tốt trắng
+    for (int x = 0; x < 8; ++x) {
+        board.setPiece(6, x, "wPawn");
+        board.setLogicPiece(6, x, std::make_unique<Pawn>(Color::White, Position{ x, 6 }));
+    }
 
-    board.setPiece(0, 1, "bKnight");
-    board.setLogicPiece(0, 1, std::make_unique<Knight>(Color::Black, Position{ 1,0 }));
+    // Quân trắng 
+    board.setPiece(7, 0, "wRook");   board.setLogicPiece(7, 0, std::make_unique<Rook>(Color::White, Position{ 0, 7 }));
+    board.setPiece(7, 1, "wKnight"); board.setLogicPiece(7, 1, std::make_unique<Knight>(Color::White, Position{ 1, 7 }));
+    board.setPiece(7, 2, "wBishop"); board.setLogicPiece(7, 2, std::make_unique<Bishop>(Color::White, Position{ 2, 7 }));
+    board.setPiece(7, 3, "wQueen");  board.setLogicPiece(7, 3, std::make_unique<Queen>(Color::White, Position{ 3, 7 }));
+    board.setPiece(7, 4, "wKing");   board.setLogicPiece(7, 4, std::make_unique<King>(Color::White, Position{ 4, 7 }));
+    board.setPiece(7, 5, "wBishop"); board.setLogicPiece(7, 5, std::make_unique<Bishop>(Color::White, Position{ 5, 7 }));
+    board.setPiece(7, 6, "wKnight"); board.setLogicPiece(7, 6, std::make_unique<Knight>(Color::White, Position{ 6, 7 }));
+    board.setPiece(7, 7, "wRook");   board.setLogicPiece(7, 7, std::make_unique<Rook>(Color::White, Position{ 7, 7 }));
 
-    board.setPiece(0, 2, "bBishop");
-    board.setLogicPiece(0, 2, std::make_unique<Bishop>(Color::Black, Position{ 2,0 }));
+    gameOver = false;
+    gameResult = "";
 
-    board.setPiece(0, 3, "bQueen");
-    board.setLogicPiece(0, 3, std::make_unique<Queen>(Color::Black, Position{ 3,0 }));
+    board.startGame(); 
 
-    board.setPiece(0, 4, "bKing");
-    board.setLogicPiece(0, 4, std::make_unique<King>(Color::Black, Position{ 4,0 }));
+    board.setRotation(false);
 
-    board.setPiece(0, 5, "bBishop");
-    board.setLogicPiece(0, 5, std::make_unique<Bishop>(Color::Black, Position{ 5,0 }));
+    if (dragHandler) {
+    }
 
-    board.setPiece(0, 6, "bKnight");
-    board.setLogicPiece(0, 6, std::make_unique<Knight>(Color::Black, Position{ 6,0 }));
-
-    board.setPiece(0, 7, "bRook");
-    board.setLogicPiece(0, 7, std::make_unique<Rook>(Color::Black, Position{ 7,0 }));
+    std::cout << "Start new game ! " << std::endl;
 }
 
 std::string Game::getDifficulty() const {

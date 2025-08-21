@@ -1,7 +1,10 @@
 #include "Game.h"
 #include <iostream>
 
-Game::Game() : board(), gameOver(false), gameState(GameState::Playing) {
+Game::Game() :  stockFish("C:/Users/ASUS/Downloads/stockfish-windows-x86-64-avx2/stockfish/stockfish.exe"), //them path o day
+                board(), 
+                gameOver(false), 
+                gameState(GameState::Playing) {
     board.loadAssets();
     dragHandler = new DragHandler(&board, this);
     gameResult = "";
@@ -157,10 +160,10 @@ void Game::setDifficulty(const std::string& difficulty) {
         searchDepth = 2; // AI tìm kiếm ít bước hơn
     }
     else if (difficulty == "Medium") {
-        searchDepth = 4; // Cân bằng
+        searchDepth = 3; // Cân bằng
     }
     else if (difficulty == "Hard") {
-        searchDepth = 6; // AI tìm kiếm sâu hơn, thông minh hơn
+        isStockfish = true; // AI tìm kiếm sâu hơn, thông minh hơn
     }
 
     // Gọi hàm setDifficulty có sẵn trong ChessBot (AIEngine.cpp)
@@ -178,7 +181,9 @@ void Game::makeAIMove() {
     // 2. Gọi AI để tìm nước đi tốt nhất
     //    Hàm findBestMove sẽ sử dụng giá trị "depth" bạn đã set trong setDifficulty
     std::cout << "AI is thinking..." << std::endl;
-    Move bestMove = m_chessBot.findBestMove(board, m_aiColor);
+    Move bestMove;
+    if (isStockfish) {bestMove= stockFish.findBestMove(board, m_aiColor);}
+    else {bestMove= m_chessBot.findBestMove(board, m_aiColor);}
 
     // 3. Thực hiện nước đi trên bàn cờ
     board.makeMove(bestMove);

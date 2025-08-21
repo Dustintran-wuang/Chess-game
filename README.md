@@ -29,13 +29,14 @@ git clone https://github.com/microsoft/vcpkg.git
 ./vcpkg/vcpkg install sfml boost-filesystem boost-system boost-process
 ```
 
-### 3. LỆNH BUILD VỚI CMAKE
+### 3. LIÊN KẾT STOCKFISH
+tải stockfish về, giải nén và gán đường dẫn đến stcofish.exe vào trong game.cpp
+
+### 4. LỆNH BUILD VỚI CMAKE
 ```bash
 cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE=.path/to/vcpkg/scripts/buildsystems/vcpkg.cmake
 cmake --build build
 ```
-### 4.TRƯỚC KHI RUN THÌ PHẢI:
-tải stockfish về và đưa stockfish.exe vào trong thư mục chung với ChessWorld.exe (ví dụ: build/bin/Debug)
 
 ### 5.RUN
  

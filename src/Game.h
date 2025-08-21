@@ -6,6 +6,7 @@
 #include "DragHandler.h"
 #include "BasePiece.h"
 #include <SFML/Graphics.hpp>
+#include "StockfishAI.h"
 #include "Pawn.h"
 #include "Rook.h"
 #include "Knight.h"
@@ -33,9 +34,12 @@ private:
     std::string gameResult; // Lưu kết quả game dạng string
 
     ChessBot m_chessBot;
+    StockfishAI stockFish;
     Color m_aiColor = Color::Black; // Màu của AI, mặc định là đen
 
     DragHandler* dragHandler;
+
+    bool isStockfish = false;
 
     std::string difficulty; // Biến lưu độ khó (Easy/Medium/Hard)
     GameMode currentMode;
